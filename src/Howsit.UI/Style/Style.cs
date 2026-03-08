@@ -1,8 +1,15 @@
+using System;
+
 namespace Howsit.UI.Style;
 
 /// <summary>
-/// Available text style
+/// Text formatting options.
 /// </summary>
+/// <remarks>
+/// Can be combined by using bitwise logical operators | or &.
+/// </remarks>
+/// <see href="https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/enum" />
+/// <see href="https://learn.microsoft.com/en-us/dotnet/api/system.flagsattribute?view=net-10.0" />
 [Flags]
 public enum TextFormat {
     Normal = 0b_0000_0000,  // 0

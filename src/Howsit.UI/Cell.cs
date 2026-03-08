@@ -1,18 +1,19 @@
-namespace Howsit.UI;
-
+using System;
 using System.Collections.Generic;
 using Howsit.UI.Style;
+
+namespace Howsit.UI;
 
 /// <summary>
 /// A single cell of the screen. The TUI equivalent of a pixel.
 /// </summary>
-public class Cell : ICell, IEquatable<Cell> {
-    public char? Value { get; set; }
-    public TextFormat Format { get; set; } = TextFormat.Normal;
-    public Color? FontColor { get; set; }
-    public Color? BgColor { get; set; }
+public readonly record struct Cell {
+    public readonly char Value { get; init; }
+    public readonly TextFormat Format { get; init; } = TextFormat.Normal;
+    public readonly Color? FontColor { get; init; }
+    public readonly Color? BgColor { get; init; }
 
-    public Cell(char? value) {
+    public Cell(char value) {
         Value = value;
     }
 
@@ -29,11 +30,29 @@ public class Cell : ICell, IEquatable<Cell> {
     }
 
     public static Cell Empty() {
-        return new Cell(null);
+        return new Cell(' ');
+    }
+
+    /// <summary>
+    /// Helper for creating a buffer of empty cells
+    /// </summary>
+    /// <param name="num">The number of empty cells to create</param>
+    /// <returns></returns>
+    public static Cell[] EmptyCells(int num) {
+        if (num == 0) {
+            return [];
+        }
+
+        Cell[] cells = new Cell[num];
+        for (int i = 0; i < num; i++) {
+            cells[i] = Cell.Empty();
+        }
+
+        return cells;
     }
 
     public bool IsEmpty() {
-        return Value is null;
+        return Value == ' ';
     }
 
     public bool StyleIsEmpty() {
@@ -41,35 +60,6 @@ public class Cell : ICell, IEquatable<Cell> {
             Format == TextFormat.Normal
             && FontColor is null
             && BgColor is null
-        );
-    }
-
-    public override bool Equals(object? obj) {
-        return obj is Cell c && Equals(c);
-    }
-
-    public bool Equals(Cell? other) {
-        return other is not null
-            && Value == other.Value
-            && Format == other.Format
-            && FontColor == other.FontColor
-            && BgColor == other.BgColor;
-    }
-
-    public static bool operator == (Cell c1, Cell c2) {
-        return Equals(c1, c2);
-    }
-    
-    public static bool operator != (Cell c1, Cell c2) {
-        return !(c1 == c2);
-    }
-
-    public override int GetHashCode() {
-        return HashCode.Combine(
-            Value,
-            Format,
-            FontColor.GetHashCode(),
-            BgColor.GetHashCode()
         );
     }
 }

@@ -1,38 +1,39 @@
-﻿namespace Howsit.UI.Tests;
+﻿using Xunit;
 
-using Xunit;
 using Howsit.UI;
 using Howsit.UI.Style;
+
+namespace Howsit.UI.Tests;
 
 public class CellTests {
     [Theory]
     [MemberData(nameof(EquivalentData))]
-    public void CellsEqualByOperator(Cell c1, Cell c2) {
-        Assert.True(c1 == c2);
+    public void CellsEqualByOperator(Cell[] cells) {
+        Assert.True(cells[0] == cells[1]);
     }
 
     [Theory]
     [MemberData(nameof(NonEquivalentData))]
-    public void CellsNotEqualByOperator(Cell c1, Cell c2) {
-        Assert.True(c1 != c2);
+    public void CellsNotEqualByOperator(Cell[] cells) {
+        Assert.True(cells[0] != cells[1]);
     }
 
     [Theory]
     [MemberData(nameof(EquivalentData))]
-    public void CellsEqualByMethod(Cell c1, Cell c2) {
-        Assert.True(c1.Equals(c2));
+    public void CellsEqualByMethod(Cell[] cells) {
+        Assert.True(cells[0].Equals(cells[1]));
     }
 
     [Theory]
     [MemberData(nameof(NonEquivalentData))]
-    public void CellsNotEqualByMethod(Cell c1, Cell c2) {
-        Assert.False(c1.Equals(c2));
+    public void CellsNotEqualByMethod(Cell[] cells) {
+        Assert.False(cells[0].Equals(cells[1]));
     }
 
     [Fact]
     public void CellIsEmpty() {
         Cell empty1 = Cell.Empty();
-        Cell empty2 = new Cell(null);
+        Cell empty2 = new Cell(' ');
 
         Assert.True(empty1.IsEmpty());
         Assert.True(empty2.IsEmpty());
@@ -61,7 +62,7 @@ public class CellTests {
     [Fact]
     public void CellHasNoStyle() {
         Cell c1 = Cell.Empty();
-        Cell c2 = new Cell(null);
+        Cell c2 = new Cell(' ');
         Cell c3 = new Cell('a');
 
         Assert.True(c1.StyleIsEmpty());
@@ -69,12 +70,20 @@ public class CellTests {
         Assert.True(c3.StyleIsEmpty());
     }
 
-    public static IEnumerable<object[]> EquivalentData() {
+    [Fact]
+    public void InitializeCellBufferIsValid() {
+        Cell[] cells = Cell.EmptyCells(2 * 2);
+        foreach (Cell c in cells) {
+            Assert.True(c.IsEmpty());
+        }
+    }
+
+    public static TheoryData<Cell[]> EquivalentData() {
         Color red = new Color(255, 0, 0);
         Color green = new Color(0, 255, 0);
         Color blue = new Color(0, 0, 255);
 
-        List<Cell[]> cells = new() {
+        TheoryData<Cell[]> cells = new() {
             new Cell[] {
                 new Cell('a'),
                 new Cell('a')
@@ -100,12 +109,12 @@ public class CellTests {
         return cells;
     }
 
-    public static IEnumerable<object[]> NonEquivalentData() {
+    public static TheoryData<Cell[]> NonEquivalentData() {
         Color red = new Color(255, 0, 0);
         Color green = new Color(0, 255, 0);
         Color blue = new Color(0, 0, 255);
 
-        List<Cell[]> cells = new() {
+        TheoryData<Cell[]> cells = new() {
             new Cell[] {
                 new Cell('a'),
                 new Cell('b')
