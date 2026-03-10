@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Howsit.App;
+using Howsit.UI;
 
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+IRenderer renderer = new Renderer();
+App app = new App(renderer);
+app.Run();
