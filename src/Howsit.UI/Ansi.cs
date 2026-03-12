@@ -88,18 +88,18 @@ public static class Ansi {
                 return content;
             }
 
-            return $"{ESC}[{BackgroundColor((Color)bgColor)}m{content}{ESC}{Reset}";
+            return $"{ESC}[{BackgroundColor((Color)bgColor)}m{content}{Reset}";
         }
 
         if (bgColor is null) {
-            return $"{ESC}[{ForegroundColor((Color)fgColor)}m{content}{ESC}{Reset}";
+            return $"{ESC}[{ForegroundColor((Color)fgColor)}m{content}{Reset}";
         }
 
         Color fg = (Color)fgColor;
         Color bg = (Color)bgColor;
-        string colorSeq = $"{ESC}[38;2{fg.Red};{fg.Green};{fg.Blue};48;2{bg.Red};{bg.Green};{bg.Blue}m";
+        string colorSeq = $"{ESC}[38;2;{fg.Red};{fg.Green};{fg.Blue};48;2;{bg.Red};{bg.Green};{bg.Blue}m";
 
-        return $"{colorSeq}{content}{ESC}{Reset}";
+        return $"{colorSeq}{content}{Reset}";
     }
 
     /// <summary>
