@@ -9,24 +9,19 @@ namespace Howsit.UI;
 /// </summary>
 public readonly record struct Cell {
     public readonly char Value { get; init; }
-    public readonly TextFormat Format { get; init; } = TextFormat.Normal;
-    public readonly Color? FontColor { get; init; }
-    public readonly Color? BgColor { get; init; }
+    public readonly CellStyle? Style { get; init; }
 
     public Cell(char value) {
         Value = value;
+        Style = null;
     }
 
     public Cell(
         char value,
-        TextFormat format,
-        Color? fontColor = null,
-        Color? bgColor = null
+        CellStyle style
     ) {
         Value = value;
-        Format = format;
-        FontColor = fontColor;
-        BgColor = bgColor;
+        Style = style;
     }
 
     public static Cell Empty() {
@@ -53,13 +48,5 @@ public readonly record struct Cell {
 
     public bool IsEmpty() {
         return Value == ' ';
-    }
-
-    public bool StyleIsEmpty() {
-        return IsEmpty() || (
-            Format == TextFormat.Normal
-            && FontColor is null
-            && BgColor is null
-        );
     }
 }

@@ -48,15 +48,28 @@ public class CellTests {
 
     [Fact]
     public void CellHasStyle() {
-        Cell c1 = new Cell('a', TextFormat.Bold);
-        Cell c2 = new Cell('a', TextFormat.Bold | TextFormat.Italic);
-        Cell c3 = new Cell('a', TextFormat.Normal, new Color(255, 0, 0));
-        Cell c4 = new Cell('a', TextFormat.Normal, new Color(255, 0, 0), new Color(0, 255, 0));
+        Cell c1 = new Cell('a', new CellStyle() { Format = TextFormat.Bold });
+        Cell c2 = new Cell('a', new CellStyle() { Format = TextFormat.Bold | TextFormat.Italic });
+        Cell c3 = new Cell(
+            'a',
+            new CellStyle() {
+                Format = TextFormat.Normal,
+                FgColor = new Color(255, 0, 0)
+            }
+        );
+        Cell c4 = new Cell(
+            'a',
+            new CellStyle() {
+                Format = TextFormat.Normal,
+                FgColor = new Color(255, 0, 0),
+                BgColor = new Color(0, 255, 0)
+            }
+        );
 
-        Assert.False(c1.StyleIsEmpty());
-        Assert.False(c2.StyleIsEmpty());
-        Assert.False(c3.StyleIsEmpty());
-        Assert.False(c4.StyleIsEmpty());
+        Assert.False(c1.Style?.IsEmpty());
+        Assert.False(c2.Style?.IsEmpty());
+        Assert.False(c3.Style?.IsEmpty());
+        Assert.False(c4.Style?.IsEmpty());
     }
 
     [Fact]
@@ -65,9 +78,9 @@ public class CellTests {
         Cell c2 = new Cell(' ');
         Cell c3 = new Cell('a');
 
-        Assert.True(c1.StyleIsEmpty());
-        Assert.True(c2.StyleIsEmpty());
-        Assert.True(c3.StyleIsEmpty());
+        Assert.True(c1.Style is null);
+        Assert.True(c2.Style is null);
+        Assert.True(c3.Style is null);
     }
 
     [Fact]
@@ -89,20 +102,46 @@ public class CellTests {
                 new Cell('a')
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic),
-                new Cell('a', TextFormat.Italic)
+                new Cell('a', new CellStyle() { Format = TextFormat.Italic }),
+                new Cell('a', new CellStyle() { Format = TextFormat.Italic })
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic | TextFormat.Bold),
-                new Cell('a', TextFormat.Italic | TextFormat.Bold)
+                new Cell('a', new CellStyle() { Format = TextFormat.Italic | TextFormat.Bold }),
+                new Cell('a', new CellStyle() { Format = TextFormat.Italic | TextFormat.Bold })
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, red),
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, red)
+                new Cell(
+                    'a',
+                    new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = red
+                    }
+                ),
+                new Cell(
+                    'a',
+                    new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = red
+                    }
+                )
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, red, green),
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, red, green)
+                new Cell(
+                    'a',
+                    new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = red,
+                        BgColor = green
+                    }
+                ),
+                new Cell(
+                    'a',
+                    new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = red,
+                        BgColor = green
+                    }
+                )
             },
         };
 
@@ -120,20 +159,38 @@ public class CellTests {
                 new Cell('b')
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic),
-                new Cell('a', TextFormat.Bold)
+                new Cell('a', new CellStyle()  {Format = TextFormat.Italic }),
+                new Cell('a', new CellStyle()  {Format = TextFormat.Bold })
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic | TextFormat.Bold),
-                new Cell('a', TextFormat.Italic | TextFormat.Underline)
+                new Cell('a', new CellStyle() { Format = TextFormat.Italic | TextFormat.Bold }),
+                new Cell('a', new CellStyle() { Format = TextFormat.Italic | TextFormat.Underline })
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, red),
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, green)
+                new Cell('a', new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = red
+                    }
+                ),
+                new Cell('a', new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = green
+                    }
+                )
             },
             new Cell[] {
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, red, green),
-                new Cell('a', TextFormat.Italic | TextFormat.Bold, red, blue)
+                new Cell('a', new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = red,
+                        BgColor = green
+                    }
+                ),
+                new Cell('a', new CellStyle() {
+                        Format = TextFormat.Italic | TextFormat.Bold,
+                        FgColor = red,
+                        BgColor = blue
+                    }
+                )
             },
         };
 

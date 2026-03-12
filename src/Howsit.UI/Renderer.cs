@@ -37,7 +37,7 @@ public class Renderer : IRenderer {
         }
 
         if (buffer.Length % width != 0) {
-            throw new RenderException("Buffere length must be evenly divisible by screen width");
+            throw new RenderException("Buffer length must be evenly divisible by screen width");
         }
 
         State state = State.StartSpan;

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Howsit.UI.Style;
 
 namespace Howsit.UI;
@@ -7,13 +9,39 @@ public static class Ansi {
 
     public const string Reset = ESC + "[0m";
 
-    public const string Bold = ESC + "[1m";
-    public const string Muted = ESC + "[2m";
-    public const string Italic = ESC + "[3m";
-    public const string Underline = ESC + "[4m";
-    public const string SlowBlink = ESC + "[5m";
-    public const string RapidBlink = ESC + "[6m";
-    public const string StrikeThrough = ESC + "[9m";
+    // SGR control codes
+    public const int Bold          = 1;
+    public const int Muted         = 2;
+    public const int Italic        = 3;
+    public const int Underline     = 4;
+    public const int SlowBlink     = 5;
+    public const int RapidBlink    = 6;
+    public const int Strikethrough = 9;
+
+    public static Dictionary<TextFormat, int> FormatControlMap = new Dictionary<TextFormat, int>() {
+        {TextFormat.Bold, Bold},
+        {TextFormat.Muted, Muted},
+        {TextFormat.Italic, Italic},
+        {TextFormat.Underline, Underline},
+        {TextFormat.SlowBlink, SlowBlink},
+        {TextFormat.RapidBlink, RapidBlink},
+        {TextFormat.Strikethrough, Strikethrough},
+    };
+
+    public static List<int> TextFormatToControlCodes(TextFormat format) {
+        List<int> flags = [];
+        foreach (TextFormat flag in Enum.GetValues<TextFormat>()) {
+            if (flag == TextFormat.Normal) {
+                continue;
+            }
+
+            if ((format & flag) != 0) {
+                flags.Add(FormatControlMap[flag]);
+            }
+        }
+
+        return flags;
+    }
 
     /// <summary>
     /// Move the cursor to the screen position.
@@ -26,37 +54,21 @@ public static class Ansi {
     }
 
     /// <summary>
-    /// Set the foreground color.
+    /// Returns the control codes for setting the foreground color to the Color provided.
     /// </summary>
     /// <param name="color"></param>
-    /// <remarks>
-    /// Example 24-bit foreground color with text: \x1b[38;2;17;57;66mHello World\x1b[0m
-    /// 
-    /// Note that you need to remember to reset the color when using this method to
-    /// manually set the foreground color.
-    /// 
-    /// Use ColorizeText() to wrap text in a color without having to manually reset.
-    /// </remarks>
     /// <returns></returns>
-    public static string SetForegroundColor(Color color) {
-        return $"{ESC}[38;2;{color.Red};{color.Green};{color.Blue}m";
+    public static string ForegroundColor(Color color) {
+        return $"38;2;{color.Red};{color.Green};{color.Blue}";
     }
 
     /// <summary>
-    /// Set the foreground color.
+    /// Returns the control codes for setting the background color to the Color provided.
     /// </summary>
     /// <param name="color"></param>
-    /// <remarks>
-    /// Example 24-bit background color with text: \x1b[48;2;17;57;66mHello World\x1b[0m
-    /// 
-    /// Note that you need to remember to reset the color when using this method to
-    /// manually set the background color.
-    /// 
-    /// Use ColorizeText() to wrap text in a color without having to manually reset.
-    /// </remarks>
     /// <returns></returns>
-    public static string SetBackgroundColor(Color color) {
-        return $"{ESC}[48;2;{color.Red};{color.Green};{color.Blue}m";
+    public static string BackgroundColor(Color color) {
+        return $"48;2;{color.Red};{color.Green};{color.Blue}";
     }
 
     /// <summary>
@@ -76,11 +88,11 @@ public static class Ansi {
                 return content;
             }
 
-            return $"{SetBackgroundColor((Color)bgColor)}{content}{ESC}{Reset}";
+            return $"{ESC}[{BackgroundColor((Color)bgColor)}m{content}{ESC}{Reset}";
         }
 
         if (bgColor is null) {
-            return $"{SetForegroundColor((Color)fgColor)}{content}{ESC}{Reset}";
+            return $"{ESC}[{ForegroundColor((Color)fgColor)}m{content}{ESC}{Reset}";
         }
 
         Color fg = (Color)fgColor;
