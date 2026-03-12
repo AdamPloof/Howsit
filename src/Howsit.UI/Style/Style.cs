@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 
-using System.Linq;
 using Howsit.UI;
 
 namespace Howsit.UI.Style;
@@ -50,30 +48,5 @@ public readonly record struct CellStyle {
     /// <returns></returns>
     public bool IsEmpty() {
         return Format == TextFormat.Normal && FgColor is null && BgColor is null;
-    }
-
-    /// <summary>
-    /// Return the style as an ANSI escape code sequence.
-    /// </summary>
-    /// <returns></returns>
-    public string EscapeSequence() {
-        if (IsEmpty()) {
-            return "";
-        }
-
-        List<string> codes = [];
-        if (FgColor is not null) {
-            codes.Add(Ansi.ForegroundColor((Color)FgColor));
-        }
-
-        if (BgColor is not null) {
-            codes.Add(Ansi.BackgroundColor((Color)BgColor));
-        }
-
-        foreach (int formatCode in Ansi.TextFormatToControlCodes(Format)) {
-            codes.Add($"{formatCode}");
-        }
-
-        return $"{Ansi.ESC}[{string.Join(';', codes)}m";
     }
 }

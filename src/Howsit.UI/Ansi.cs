@@ -101,4 +101,29 @@ public static class Ansi {
 
         return $"{colorSeq}{content}{ESC}{Reset}";
     }
+
+    /// <summary>
+    /// Return the style as an ANSI escape code sequence.
+    /// </summary>
+    /// <returns></returns>
+    public static string EscapeSequence(CellStyle style) {
+        if (style.IsEmpty()) {
+            return "";
+        }
+
+        List<string> codes = [];
+        if (style.FgColor is not null) {
+            codes.Add(Ansi.ForegroundColor((Color)style.FgColor));
+        }
+
+        if (style.BgColor is not null) {
+            codes.Add(Ansi.BackgroundColor((Color)style.BgColor));
+        }
+
+        foreach (int formatCode in Ansi.TextFormatToControlCodes(style.Format)) {
+            codes.Add($"{formatCode}");
+        }
+
+        return $"{Ansi.ESC}[{string.Join(';', codes)}m";
+    }
 }
