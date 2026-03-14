@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using Howsit.UI;
 using Howsit.UI.Exceptions;
+using Howsit.UI.Style;
 
 namespace Howsit.UI.Tests;
 
@@ -66,26 +67,70 @@ public class RendererTests {
         IEnumerable<Renderer.CellSpan> diff = Renderer.Diff(buffer, prevBuffer, 3);
 
         Assert.Equal(2, diff.Count());
-        Renderer.CellSpan? firstRow = diff.FirstOrDefault(d => d.Row == 0);
-        if (firstRow is null) {
-            return;
-        }
 
+        Renderer.CellSpan? firstRow = diff.FirstOrDefault(d => d.Row == 0);
+        Assert.NotNull(firstRow);
         Assert.Single(firstRow.Cells);
         Assert.Equal(0, firstRow.Row);
         Assert.Equal(1, firstRow.StartColumn);
         Assert.Equal('B', firstRow.Cells[0].Value);
+
         Renderer.CellSpan? secondRow = diff.FirstOrDefault(d => d.Row == 1);
         Assert.NotNull(secondRow);
-        if (secondRow is null) {
-            return;
-        }
-
+        Assert.NotNull(secondRow);
         Assert.Equal(2, secondRow.Cells.Count);
         Assert.Equal(1, secondRow.Row);
         Assert.Equal(0, secondRow.StartColumn);
         Assert.Equal('D', secondRow.Cells[0].Value);
         Assert.Equal('E', secondRow.Cells[1].Value);
+    }
+
+    [Fact]
+    public void StyleChangesDiffFound() {
+        CellStyle prevStyle = new CellStyle() {
+            Format = TextFormat.Bold | TextFormat.Italic,
+            FgColor = new Color(112, 188, 255)
+        };
+        Cell[] prev = new Cell[9] {
+            new Cell('a', prevStyle), new Cell('b', prevStyle), new Cell('c'),
+            new Cell('d', prevStyle), new Cell('e', prevStyle), new Cell('f'),
+            new Cell('g'), new Cell('h', prevStyle), new Cell('i'),
+        };
+        CellStyle nextStyle = new CellStyle() {
+            Format = TextFormat.Muted,
+            BgColor = new Color(80, 80, 80)
+        };
+        Cell[] next = new Cell[9] {
+            new Cell('a', prevStyle), new Cell('b', prevStyle), new Cell('c'),
+            new Cell('d', nextStyle), new Cell('e', nextStyle), new Cell('f'),
+            new Cell('g'), new Cell('h', nextStyle), new Cell('i', nextStyle),
+        };
+        
+        ReadOnlySpan<Cell> prevBuffer = prev.AsSpan();
+        ReadOnlySpan<Cell> buffer = next.AsSpan();
+
+        IEnumerable<Renderer.CellSpan> diff = Renderer.Diff(buffer, prevBuffer, 3);
+
+        Assert.Equal(2, diff.Count());
+        Renderer.CellSpan? firstRow = diff.FirstOrDefault(d => d.Row == 1);
+        Assert.NotNull(firstRow);
+        Assert.Equal(2, firstRow.Cells.Count);
+        Assert.Equal(1, firstRow.Row);
+        Assert.Equal(0, firstRow.StartColumn);
+        Assert.Equal('d', firstRow.Cells[0].Value);
+        Assert.Equal('e', firstRow.Cells[1].Value);
+        Assert.Equal(nextStyle, firstRow.Cells[0].Style);
+        Assert.Equal(nextStyle, firstRow.Cells[1].Style);
+
+        Renderer.CellSpan? secondRow = diff.FirstOrDefault(d => d.Row == 2);
+        Assert.NotNull(secondRow);
+        Assert.Equal(2, secondRow.Cells.Count);
+        Assert.Equal(2, secondRow.Row);
+        Assert.Equal(1, secondRow.StartColumn);
+        Assert.Equal('h', secondRow.Cells[0].Value);
+        Assert.Equal('i', secondRow.Cells[1].Value);
+        Assert.Equal(nextStyle, secondRow.Cells[0].Style);
+        Assert.Equal(nextStyle, secondRow.Cells[1].Style);
     }
 
     [Fact]

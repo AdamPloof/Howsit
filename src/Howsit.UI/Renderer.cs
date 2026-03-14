@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Howsit.UI.Exceptions;
+using Howsit.UI.Style;
 
 namespace Howsit.UI;
 
@@ -57,6 +58,7 @@ public class Renderer : IRenderer {
                         diff.Add(new CellSpan() {
                             Row = row,
                             StartColumn = column,
+                            Style = buffer[i].Style,
                             Cells = new List<Cell>() { buffer[i] }
                         });
                         state = State.InSpan;
@@ -149,31 +151,69 @@ public class Renderer : IRenderer {
     /// <summary>
     /// Completely re-draw the screen with a new buffer.
     /// </summary>
+    /// <remarks>
+    /// It's assumed that the buffer.Length == width * height
+    /// </remarks>
     /// <param name="buffer"></param>
     /// <param name="width"></param>
     /// <param name="height"></param>
     private static void DrawScreen(ReadOnlySpan<Cell> buffer, int width, int height) {
+        if (buffer.Length == 0) {
+            throw new RenderException("Screen buffer cannot be empty");
+        }
+
         int bufferOffset = 0;
         for (int row = 0; row < height; row++) {
-            Console.Out.Write(Ansi.MoveCursorTo(row, 0));
+            // Split the row into spans of consecutive styled cells.
+            List<CellSpan> lineSpans = [];
+            ReadOnlySpan<Cell> line = buffer.Slice(bufferOffset, bufferOffset + width - 1);
+            CellStyle? prevStyle = line[0].Style;
 
-            // TODO: handle styles
-            Cell[] line = buffer.Slice(bufferOffset, bufferOffset + width - 1).ToArray();
-            string content = new string(line.Select(c => c.Value).ToArray());
-            Console.Write(content);
+            int currentSpanIdx = 0;
+            lineSpans.Add(
+                new CellSpan() { Row = row, StartColumn = 0, Cells = new List<Cell>(), Style = prevStyle }
+            );
+            for (int i = 0; i < line.Length; i++) {
+                if (line[i].Style == prevStyle) {
+                    lineSpans[currentSpanIdx].Cells.Add(line[i]);
+                } else {
+                    lineSpans.Add(
+                        new CellSpan() {
+                            Row = row,
+                            StartColumn = i,
+                            Cells = new List<Cell>() { line[i] },
+                            Style = line[i].Style
+                        }
+                    );
+                    prevStyle = line[i].Style;
+                    currentSpanIdx++;
+                }
+            }
+            lineSpans.ForEach(DrawSpan);
+
             bufferOffset += width;
         }
     }
 
     /// <summary>
-    /// Selectively update screen positions in a CellSpan
+    /// Selectively update screen positions for a span of cells. All cells in the span
+    /// will be painted with the style of the CellSpan.
     /// </summary>
+    /// <remarks>
+    /// The width of a span + its starting column should not exceed the width of the screen.
+    /// </remarks>
     /// <param name="span"></param>
     private static void DrawSpan(CellSpan span) {
         Console.Out.Write(Ansi.MoveCursorTo(span.Row, span.StartColumn));
+        string content;
+        if (span.Style is not null) {
+            content = Ansi.EscapeSequence(
+                (CellStyle)span.Style
+            ) + new string(span.Cells.Select(c => c.Value).ToArray());   
+        } else {
+            content = new string(span.Cells.Select(c => c.Value).ToArray());
+        }
 
-        // TODO: handle styles
-        string content = new string(span.Cells.Select(c => c.Value).ToArray());
         Console.Out.Write(content);
     }
 
@@ -183,6 +223,7 @@ public class Renderer : IRenderer {
     public record CellSpan {
         public int Row { get; init; }
         public int StartColumn { get; init; }
+        public CellStyle? Style { get; init; } = null;
         public List<Cell> Cells { get; init; } = [];
     }
 }
