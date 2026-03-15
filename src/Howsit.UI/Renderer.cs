@@ -15,9 +15,11 @@ public class Renderer : IRenderer {
     }
 
     private Cell[]? _prevBuffer;
+    private CellStyle? _activeStyle;
 
     public Renderer() {
         _prevBuffer = null;
+        _activeStyle = null;
     }
 
     /// <summary>
@@ -33,6 +35,10 @@ public class Renderer : IRenderer {
         ReadOnlySpan<Cell> prevBuffer,
         int width
     ) {
+        if (buffer.Length == 0) {
+            throw new RenderException("Screen buffer cannot be empty");
+        }
+
         if (buffer.Length != prevBuffer.Length) {
             throw new RenderException("Unable to diff buffers. Buffers must be of equal length.");
         }
@@ -64,6 +70,17 @@ public class Renderer : IRenderer {
                         state = State.InSpan;
                         break;
                     case State.InSpan:
+                        if (buffer[i].Style != diff.Last().Cells.Last().Style) {
+                            // Style is different from previous cell, start a new span.
+                            // Since we're in the InSpan state, there is at least
+                            // one other cell in the span.
+                            diff.Add(new CellSpan() {
+                                Row = row,
+                                StartColumn = column,
+                                Style = buffer[i].Style,
+                                Cells = new List<Cell>()
+                            });
+                        }
                         diff.Last().Cells.Add(buffer[i]);
                         break;
                     default:
@@ -77,40 +94,7 @@ public class Renderer : IRenderer {
 
         return diff;
     }
-
-    /// <inheritdoc />
-    public void Render(ReadOnlySpan<Cell> buffer, int width, int height) {
-        if (buffer.Length != width * height) {
-            throw new RenderException("Buffer length must match screen dimensions (width * height)");
-        }
-
-        if (_prevBuffer is not null && _prevBuffer.Length != buffer.Length) {
-            // Redraw the screen from scratch if the window was resized.
-            DrawScreen(buffer, width, height);
-            Console.Out.Flush();
-
-            return;
-        }
-
-        if (_prevBuffer is null) {
-            _prevBuffer = Cell.EmptyCells(width * height);
-        }
-
-        IEnumerable<CellSpan> diff = Diff(buffer, _prevBuffer, width);
-        foreach (CellSpan span in diff) {
-            DrawSpan(span);
-        }
-
-        Console.Out.Flush();
-        buffer.CopyTo(_prevBuffer);
-    }
-
-    /// <inheritdoc>
-    public void Render(string content, int width, int height) {
-        Cell[] buffer = StringToBuffer(content, width, height);
-        Render(buffer, width, height);
-    }
-
+    
     /// <summary>
     /// Convert a string to a screen buffer of Cells. The string is split into
     /// rows on newlines. Any content that overflows the width or height is truncated.
@@ -148,6 +132,39 @@ public class Renderer : IRenderer {
         return buffer;
     }
 
+    /// <inheritdoc />
+    public void Render(ReadOnlySpan<Cell> buffer, int width, int height) {
+        if (buffer.Length != width * height) {
+            throw new RenderException("Buffer length must match screen dimensions (width * height)");
+        }
+
+        if (_prevBuffer is not null && _prevBuffer.Length != buffer.Length) {
+            // Redraw the screen from scratch if the window was resized.
+            DrawScreen(buffer, width, height);
+            Console.Out.Flush();
+
+            return;
+        }
+
+        if (_prevBuffer is null) {
+            _prevBuffer = Cell.EmptyCells(width * height);
+        }
+
+        IEnumerable<CellSpan> diff = Diff(buffer, _prevBuffer, width);
+        foreach (CellSpan span in diff) {
+            DrawSpan(span);
+        }
+
+        Console.Out.Flush();
+        buffer.CopyTo(_prevBuffer);
+    }
+
+    /// <inheritdoc>
+    public void Render(string content, int width, int height) {
+        Cell[] buffer = StringToBuffer(content, width, height);
+        Render(buffer, width, height);
+    }
+
     /// <summary>
     /// Completely re-draw the screen with a new buffer.
     /// </summary>
@@ -157,7 +174,7 @@ public class Renderer : IRenderer {
     /// <param name="buffer"></param>
     /// <param name="width"></param>
     /// <param name="height"></param>
-    private static void DrawScreen(ReadOnlySpan<Cell> buffer, int width, int height) {
+    private void DrawScreen(ReadOnlySpan<Cell> buffer, int width, int height) {
         if (buffer.Length == 0) {
             throw new RenderException("Screen buffer cannot be empty");
         }
@@ -196,34 +213,28 @@ public class Renderer : IRenderer {
     }
 
     /// <summary>
-    /// Selectively update screen positions for a span of cells. All cells in the span
-    /// will be painted with the style of the CellSpan.
+    /// Draw a span of cells to the screen. Used to electively updates
+    /// a portion of the screen.
     /// </summary>
     /// <remarks>
     /// The width of a span + its starting column should not exceed the width of the screen.
     /// </remarks>
     /// <param name="span"></param>
-    private static void DrawSpan(CellSpan span) {
+    private void DrawSpan(CellSpan span) {
         Console.Out.Write(Ansi.MoveCursorTo(span.Row, span.StartColumn));
         string content;
         if (span.Style is not null) {
             content = Ansi.EscapeSequence(
                 (CellStyle)span.Style
-            ) + new string(span.Cells.Select(c => c.Value).ToArray());   
+            ) + new string(span.Cells.Select(c => c.Value).ToArray());
+        } else if (_activeStyle is not null) {
+            content = Ansi.Reset + new string(span.Cells.Select(c => c.Value).ToArray());
         } else {
             content = new string(span.Cells.Select(c => c.Value).ToArray());
         }
 
-        Console.Out.Write(content);
-    }
+        _activeStyle = span.Style;
 
-    /// <summary>
-    /// A span of cells and its starting position.
-    /// </summary>
-    public record CellSpan {
-        public int Row { get; init; }
-        public int StartColumn { get; init; }
-        public CellStyle? Style { get; init; } = null;
-        public List<Cell> Cells { get; init; } = [];
+        Console.Out.Write(content);
     }
 }
