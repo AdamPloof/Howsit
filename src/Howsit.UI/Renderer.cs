@@ -72,8 +72,6 @@ public class Renderer : IRenderer {
                     case State.InSpan:
                         if (buffer[i].Style != diff.Last().Cells.Last().Style) {
                             // Style is different from previous cell, start a new span.
-                            // Since we're in the InSpan state, there is at least
-                            // one other cell in the span.
                             diff.Add(new CellSpan() {
                                 Row = row,
                                 StartColumn = column,
@@ -213,7 +211,7 @@ public class Renderer : IRenderer {
     }
 
     /// <summary>
-    /// Draw a span of cells to the screen. Used to electively updates
+    /// Draw a span of cells to the screen. Used to selectively updates
     /// a portion of the screen.
     /// </summary>
     /// <remarks>
