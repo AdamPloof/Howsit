@@ -10,6 +10,6 @@ namespace Howsit.UI.Layout;
 ///   in the layout.
 /// - Handling window resizes and updating the allocated space
 /// </remarks>
-public interface ILayoutManager {
-    public void Allocate();
+public interface ILayout {
+    public void Arrange();
 }
