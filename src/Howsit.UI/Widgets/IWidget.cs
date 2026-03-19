@@ -28,12 +28,12 @@ public interface IWidget {
     /// <summary>
     /// Maximum size requested for the widget
     /// </summary>
-    public Size MaxSize { get; set; }
+    public Size? MaxSize { get; set; }
 
     /// <summary>
     /// Preferred size requested for the widget
     /// </summary>
-    public Size PreferredSize { get; set; }
+    public Size? PreferredSize { get; set; }
 
     /// <summary>
     /// Amount that the widget should stretch horizontally relative to its adjacent siblings.
@@ -79,16 +79,16 @@ public interface IWidget {
     public int Zindex { get; set; }
 
     /// <summary>
-    /// Actual size of widget. This is set by the layout manager when allocating space
+    /// Bounding box of the widget. This is set by the layout manager when allocating space
     /// via SetBounds.
     /// </summary>
-    protected Size Size { get; set; }
+    public Rect? BoundingBox { get; set; }
 
     /// <summary>
-    /// Set the bounds of the widget. Used by layouts to allocate space.
+    /// Set the bounding box of the widget. Used by layouts to allocate space.
     /// </summary>
-    /// <param name="size"></param>
-    public void SetBounds(Size size);
+    /// <param name="rect"></param>
+    public void SetBounds(Rect? rect);
 
     /// <summary>
     /// Render the cell to a cell buffer.
