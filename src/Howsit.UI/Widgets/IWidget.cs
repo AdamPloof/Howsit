@@ -1,3 +1,5 @@
+using System;
+
 using Howsit.UI;
 using Howsit.UI.Drawing;
 using Howsit.UI.Layout;
@@ -28,12 +30,12 @@ public interface IWidget {
     /// <summary>
     /// Maximum size requested for the widget
     /// </summary>
-    public Size? MaxSize { get; set; }
+    public Size MaxSize { get; set; }
 
     /// <summary>
     /// Preferred size requested for the widget
     /// </summary>
-    public Size? PreferredSize { get; set; }
+    public Size PreferredSize { get; set; }
 
     /// <summary>
     /// Amount that the widget should stretch horizontally relative to its adjacent siblings.
@@ -42,9 +44,9 @@ public interface IWidget {
     /// <example>
     /// Widgets A and B are side by side. A.StretchHorizontal = 1 and B.StretchHorizontal = 2
     /// --------------------------------
-    /// | A      | B                    |
-    /// |        | B gets 2x the space  |
-    /// |        |                      |
+    /// | A       | B                   |
+    /// |         | Gets 2x the space   |
+    /// |         |                     |
     /// |_______________________________|
     /// 
     /// When A.StretchHorizontal = 2 and B.StretchHorizontal = 2
@@ -82,13 +84,53 @@ public interface IWidget {
     /// Bounding box of the widget. This is set by the layout manager when allocating space
     /// via SetBounds.
     /// </summary>
-    public Rect? BoundingBox { get; set; }
+    public Rect BoundingBox { get; set; }
+
+    /// <summary>
+    /// Get the widgets unique ID.
+    /// </summary>
+    /// <returns></returns>
+    public Guid GetId();
 
     /// <summary>
     /// Set the bounding box of the widget. Used by layouts to allocate space.
     /// </summary>
     /// <param name="rect"></param>
-    public void SetBounds(Rect? rect);
+    public void SetBounds(Rect rect);
+
+    /// <summary>
+    /// Helper for getting the height of the widget's bounding box.
+    /// </summary>
+    /// <returns></returns>
+    public int GetHeight();
+
+    /// <summary>
+    /// Helper for getting the width of the widget's bounding box.
+    /// </summary>
+    /// <returns></returns>
+    public int GetWidth();
+
+    /// <summary>
+    /// Move the widget to the coordinates provided.
+    /// </summary>
+    /// <summary>
+    /// This method is called performing the layout for the widget. Attempts to
+    /// call this directly will have no effect. 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void Move(int x, int y);
+
+    /// <summary>
+    /// Resize the widget to the new dimensions.
+    /// </summary>
+    /// <summary>
+    /// This method is called performing the layout for the widget. Attempts to
+    /// call this directly will have no effect. 
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    public void Resize(int width, int height);
 
     /// <summary>
     /// Render the cell to a cell buffer.

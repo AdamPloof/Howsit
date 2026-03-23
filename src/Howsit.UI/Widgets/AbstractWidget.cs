@@ -1,3 +1,5 @@
+using System;
+
 using Howsit.UI.Drawing;
 using Howsit.UI.Layout;
 
@@ -11,10 +13,10 @@ public abstract class AbstractWidget : IWidget {
     public Size MinSize { get; set; }
 
     /// <inheritdoc />
-    public Size? MaxSize { get; set; }
+    public Size MaxSize { get; set; }
 
     /// <inheritdoc />
-    public Size? PreferredSize { get; set; }
+    public Size PreferredSize { get; set; }
 
     /// <inheritdoc />
     public int StretchHorizontal { get; set; }
@@ -32,14 +34,52 @@ public abstract class AbstractWidget : IWidget {
     public int Zindex { get; set; }
 
     /// <inheritdoc />
-    protected Size Size { get; set; }
+    public Rect BoundingBox { get; set; }
+
+    protected Guid _id;
+
+    /// <summary>
+    /// All Widgets that inherit from AbstractWidget should call the base constructor
+    /// to ensure that its Id is set.
+    /// </summary>
+    public AbstractWidget() {
+        _id = Guid.NewGuid();
+        BoundingBox = Rect.Empty();
+        MinSize = Size.Empty();
+        PreferredSize = Size.Empty();
+        MaxSize = Size.Empty();
+    }
 
     /// <inheritdoc />
-    public Rect? BoundingBox { get; set; } = null;
+    public Guid GetId() {
+        return _id;
+    }
 
     /// <inheritdoc />
-    public void SetBounds(Rect? rect) {
+    public void SetBounds(Rect rect) {
         BoundingBox = rect;
+    }
+
+    /// <inheritdoc />
+    public int GetHeight() {
+        return BoundingBox.Height;
+    }
+
+    /// <inheritdoc />
+    public int GetWidth() {
+        return BoundingBox.Width;
+    }
+
+    /// <inheritdoc />
+    public void Move(int x, int y) {
+        BoundingBox.X = x;
+        BoundingBox.Y = y;
+    }
+    
+    /// <inheritdoc />
+    public void Resize(int width, int height) {
+        BoundingBox.Width = width;
+        BoundingBox.Height = height;
     }
 
     /// <inheritdoc />

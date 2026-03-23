@@ -18,5 +18,5 @@ public interface ILayout {
     /// Calculate the bounding boxes for an collection of widgets in order to
     /// fit within their parent's bounding box.
     /// </summary>
-    public void Arrange(IEnumerable<IWidget> widgets, Rect bounds);
+    public void Arrange(IReadOnlyList<IWidget> widgets, Rect bounds);
 }
