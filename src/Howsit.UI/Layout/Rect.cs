@@ -10,6 +10,24 @@ public class Rect {
     public int Width { get; set; }
     public int Height { get; set; }
 
+    /// <summary>
+    /// Constructor for an empty Rect. Useful as a default value.
+    /// </summary>
+    /// <returns></returns>
+    public Rect() {
+        X = -1;
+        Y = -1;
+        Width = 0;
+        Height = 0;
+    }
+
+    /// <summary>
+    /// Standard constructor for a non-empty rect
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
     public Rect(int x, int y, int width, int height) {
         X = x;
         Y = y;
@@ -17,14 +35,6 @@ public class Rect {
         Height = height;
     }
 
-    /// <summary>
-    /// Returns an empty Rect. Useful as a default value.
-    /// </summary>
-    /// <returns></returns>
-    public static Rect Empty() {
-        return new Rect(-1, -1, 0, 0);
-    }
-    
     /// <summary>
     /// Returns true if width or height is 0 or if x or y is negative
     /// </summary>

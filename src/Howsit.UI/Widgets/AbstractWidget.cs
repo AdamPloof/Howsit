@@ -44,7 +44,7 @@ public abstract class AbstractWidget : IWidget {
     /// </summary>
     public AbstractWidget() {
         _id = Guid.NewGuid();
-        BoundingBox = Rect.Empty();
+        BoundingBox = new Rect();
         MinSize = Size.Empty();
         PreferredSize = Size.Empty();
         MaxSize = Size.Empty();
