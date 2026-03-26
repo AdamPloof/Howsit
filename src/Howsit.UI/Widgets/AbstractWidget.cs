@@ -10,13 +10,7 @@ public abstract class AbstractWidget : IWidget {
     public bool Visible { get; set; }
 
     /// <inheritdoc />
-    public Size MinSize { get; set; }
-
-    /// <inheritdoc />
-    public Size MaxSize { get; set; }
-
-    /// <inheritdoc />
-    public Size PreferredSize { get; set; }
+    public Size SizeHint { get; set; }
 
     /// <inheritdoc />
     public int StretchHorizontal { get; set; }
@@ -45,9 +39,7 @@ public abstract class AbstractWidget : IWidget {
     public AbstractWidget() {
         _id = Guid.NewGuid();
         BoundingBox = new Rect();
-        MinSize = Size.Empty();
-        PreferredSize = Size.Empty();
-        MaxSize = Size.Empty();
+        SizeHint = Size.Empty();
     }
 
     /// <inheritdoc />
@@ -74,6 +66,15 @@ public abstract class AbstractWidget : IWidget {
     public void Move(int x, int y) {
         BoundingBox.X = x;
         BoundingBox.Y = y;
+    }
+
+    /// <inheritdoc />
+    public void Nudge(int xAmount, int yAmount) {
+        BoundingBox.X += xAmount;
+        BoundingBox.Y += yAmount;
+
+        // TODO: should probably add in IsValid method and make sure that the
+        // coodinates are valid after moving/nudging
     }
     
     /// <inheritdoc />

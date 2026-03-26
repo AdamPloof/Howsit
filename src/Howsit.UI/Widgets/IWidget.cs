@@ -23,19 +23,9 @@ public interface IWidget {
     public bool Visible { get; set; }
 
     /// <summary>
-    /// Minimum size requested for the widget
+    /// Requested for the widget
     /// </summary>
-    public Size MinSize { get; set; }
-
-    /// <summary>
-    /// Maximum size requested for the widget
-    /// </summary>
-    public Size MaxSize { get; set; }
-
-    /// <summary>
-    /// Preferred size requested for the widget
-    /// </summary>
-    public Size PreferredSize { get; set; }
+    public Size SizeHint { get; set; }
 
     /// <summary>
     /// Amount that the widget should stretch horizontally relative to its adjacent siblings.
@@ -120,6 +110,17 @@ public interface IWidget {
     /// <param name="x"></param>
     /// <param name="y"></param>
     public void Move(int x, int y);
+
+    /// <summary>
+    /// Similiar to Move but shifts the widget the specified amount along an axis.
+    /// </summary>
+    /// <summary>
+    /// This method is called performing the layout for the widget. Attempts to
+    /// call this directly will have no effect. 
+    /// </summary>
+    /// <param name="xAmount"></param>
+    /// <param name="yAmount"></param>
+    public void Nudge(int xAmount, int yAmount);
 
     /// <summary>
     /// Resize the widget to the new dimensions.
