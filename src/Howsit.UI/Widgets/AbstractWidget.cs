@@ -53,6 +53,16 @@ public abstract class AbstractWidget : IWidget {
     }
 
     /// <inheritdoc />
+    public int X() {
+        return BoundingBox.X;
+    }
+
+    /// <inheritdoc />
+    public int Y() {
+        return BoundingBox.Y;
+    }
+
+    /// <inheritdoc />
     public int GetHeight() {
         return BoundingBox.Height;
     }

@@ -92,43 +92,6 @@ public class Renderer : IRenderer {
 
         return diff;
     }
-    
-    /// <summary>
-    /// Convert a string to a screen buffer of Cells. The string is split into
-    /// rows on newlines. Any content that overflows the width or height is truncated.
-    /// </summary>
-    /// <param name="content"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <returns></returns>
-    public static Cell[] StringToBuffer(string content, int width, int height) {
-        string[] rows = content.Split(
-            new string[] { Environment.NewLine },
-            StringSplitOptions.None
-        );
-        Cell[] buffer = Cell.EmptyCells(width * height);
-        int rownum = 0;
-        foreach (string row in rows) {
-            if (rownum == height) {
-                break;
-            }
-
-            int col = 0;
-            foreach (char c in row) {
-                if (col == width) {
-                    // truncate content
-                    break;
-                }
-
-                buffer[col + (rownum * width)] = new Cell(c);
-                col++;
-            }
-
-            rownum++;
-        }
-
-        return buffer;
-    }
 
     /// <inheritdoc />
     public void Render(ReadOnlySpan<Cell> buffer, int width, int height) {
@@ -159,7 +122,7 @@ public class Renderer : IRenderer {
 
     /// <inheritdoc>
     public void Render(string content, int width, int height) {
-        Cell[] buffer = StringToBuffer(content, width, height);
+        Cell[] buffer = TextBuffer.FromString(content, width, height);
         Render(buffer, width, height);
     }
 

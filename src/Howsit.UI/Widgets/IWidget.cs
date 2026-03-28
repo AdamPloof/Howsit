@@ -89,6 +89,18 @@ public interface IWidget {
     public void SetBounds(Rect rect);
 
     /// <summary>
+    /// Helper for getting the x coordinate of the widget's bounding box.
+    /// </summary>
+    /// <returns></returns>
+    public int X();
+
+    /// <summary>
+    /// Helper for getting the y coordinate of the widget's bounding box.
+    /// </summary>
+    /// <returns></returns>
+    public int Y();
+
+    /// <summary>
     /// Helper for getting the height of the widget's bounding box.
     /// </summary>
     /// <returns></returns>

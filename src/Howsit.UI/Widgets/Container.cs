@@ -1,5 +1,6 @@
+using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Howsit.UI;
 using Howsit.UI.Layout;
 
@@ -25,24 +26,49 @@ public class Container : AbstractWidget, IContainer {
 
     /// <inheritdoc />
     public void PerformLayout() {
-        if (BoundingBox is not Rect bbox) {
-            // TODO: throw error?
-            // TODO: validate bounding box is at least 1x1?
-            return;
+        if (BoundingBox.IsEmpty()) {
+            throw new Exception("Unable to layout widget. Bounds is empty");
         }
 
-        _layout.Arrange(_children, bbox);
+        _layout.Arrange(_children, BoundingBox);
     }
 
     /// <summary>
-    /// Loops through children to get requested space which is passed to the layout.
-    /// The layout will return the actual space available to assign to each child.
-    /// Finally, each widget will be painted and added to this containers buffer.
+    /// Paint each widget and combine into the container's buffer.
     /// </summary>
+    /// <remarks>
+    /// Preconditions:
+    /// - Layout has been performed for child widgets
+    /// - BoundingBox of Container is not empty
+    /// </remarks>
     /// <returns></returns>
     public override Cell[] Paint() {
-        Cell[] cells = [];
+        if (BoundingBox.IsEmpty()) {
+            throw new Exception("Unable to paint widget. Bounds is empty");
+        }
 
-        return cells;
+        Cell[] buffer = Cell.EmptyCells(BoundingBox.Width * BoundingBox.Height);
+        foreach (IWidget w in _children) {
+            int row = w.Y();
+            int col = w.X();
+            Cell[] widgetBuffer = w.Paint();
+            foreach (Cell c in widgetBuffer) {
+                if (col - w.X() >= w.GetWidth()) {
+                    row++;
+                    col = w.X();
+                }
+
+                int pos = col + (row * BoundingBox.Width);
+                if (pos >= buffer.Length) {
+                    // This indicates a bug in the Layout
+                    throw new Exception("Paint position exceeded buffer size");
+                }
+
+                buffer[pos] = c;
+                col++;
+            }
+        }
+
+        return buffer;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using Howsit.UI;
+using Howsit.UI.Style;
 
 namespace Howsit.UI.Widgets;
 
@@ -8,26 +9,35 @@ namespace Howsit.UI.Widgets;
 /// </summary>
 public class Label : AbstractWidget {
     private string _content;
+    private CellStyle? _style;
 
     public Label(string content) : base() {
         _content = content;
+        _style = null;
+    }
+
+    public Label(string content, CellStyle style) : base() {
+        _content = content;
+        _style = style;
+    }
+
+    public void SetContent(string content) {
+        _content = content;
+    }
+
+    public void SetStyle(CellStyle? style) {
+        _style = style;
     }
 
     public override Cell[] Paint() {
         if (BoundingBox.IsEmpty()) {
             return new Cell[0];
         }
-        Cell[] cells = Cell.EmptyCells(BoundingBox.Width * BoundingBox.Height);
-        int idx = 0;
-        foreach (char c in _content) {
-            if (idx >= cells.Length) {
-                break;
-            }
 
-            cells[idx] = new Cell(c);
-            idx++;
+        if (_style is CellStyle s) {
+            return TextBuffer.FromString(_content, BoundingBox.Width, BoundingBox.Height, s);
+        } else {
+            return TextBuffer.FromString(_content, BoundingBox.Width, BoundingBox.Height);
         }
-
-        return cells;
     }
 }
