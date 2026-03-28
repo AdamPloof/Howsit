@@ -6,11 +6,11 @@ using Howsit.UI.Widgets;
 namespace Howsit.UI.Layout;
 
 /// <summary>
-/// Lines up widgets vertically
+/// Lines up widgets horizontally
 /// </summary>
-public class VBoxLayout : ILayout {
+public class HBoxLayout : ILayout {
     /// <summary>
-    /// Arrange widgets in a vertically stacked box.
+    /// Arrange widgets in a horizontally stacked box.
     /// </summary>
     /// <remarks>
     /// This method has be written to minimize the number of passes required to calculate
@@ -40,67 +40,67 @@ public class VBoxLayout : ILayout {
         }
 
         int totalStretchFactors = 0;
-        int totalRequestedHeight = 0;
+        int totalRequestedWidth = 0;
         foreach (IWidget w in widgets) {
             // Pass 1. Figure how much space is required and get stretch preferences.
-            if (w.SizeHint.IsEmpty() && w.StretchVertical < 1) {
+            if (w.SizeHint.IsEmpty() && w.StretchHorizontal < 1) {
                 throw new Exception(
                     "Unable to layout widget. Widget must either have a size hint or stretch"
                 );
             }
 
-            totalRequestedHeight += w.SizeHint.Height;
+            totalRequestedWidth += w.SizeHint.Width;
 
-            if (w.StretchVertical > 0) {
-                totalStretchFactors += w.StretchVertical;
+            if (w.StretchHorizontal > 0) {
+                totalStretchFactors += w.StretchHorizontal;
             }
         }
 
-        int currentY = bounds.Y;
-        int extraHeight = bounds.Height - totalRequestedHeight;
-        int remainingHeight = bounds.Height;
+        int currentX = bounds.X;
+        int extraWidth = bounds.Width - totalRequestedWidth;
+        int remainingWidth = bounds.Width;
         foreach (IWidget w in widgets) {
             // Pass 2. Set the bounds for each widget
-            if (remainingHeight < 1) {
+            if (remainingWidth < 1) {
                 // TODO: rather than first come first serve on space, consider rationing space
                 // among all widgets
-                w.SetBounds(new Rect(bounds.X, currentY, 0, 0));
+                w.SetBounds(new Rect(currentX, bounds.Y, 0, 0));
                 continue;
             }
 
-            int width;
-            if (w.StretchHorizontal > 0) {
-                width = bounds.Width;
+            int height;
+            if (w.StretchVertical > 0) {
+                height = bounds.Height;
             } else {
-                width = w.SizeHint.Width < bounds.Width ? w.SizeHint.Width : bounds.Width;
+                height = w.SizeHint.Height < bounds.Height ? w.SizeHint.Height : bounds.Height;
             }
 
-            int height = w.SizeHint.Height < remainingHeight ? w.SizeHint.Height : remainingHeight;
-            if (extraHeight > 0 && w.StretchVertical > 0) {
+            int width = w.SizeHint.Width < remainingWidth ? w.SizeHint.Width : remainingWidth;
+            if (extraWidth > 0 && w.StretchHorizontal > 0) {
                 // Extra space available, handle stretch    
-                int stretch = (int)(((double)w.StretchVertical / totalStretchFactors) * extraHeight);
-                height += stretch;
+                int stretch = (int)(((double)w.StretchHorizontal / totalStretchFactors) * extraWidth);
+                width += stretch;
             }
 
-            Rect r = new Rect(bounds.X, currentY, width, height);
+            Rect r = new Rect(currentX, bounds.Y, width, height);
             w.SetBounds(r);
-            remainingHeight -= w.GetHeight();
-            currentY = w.GetHeight();
+            remainingWidth -= w.GetWidth();
+            currentX = w.GetWidth();
         }
 
         if (totalStretchFactors > 0) {
-            // Pass 3. distribute remaining height evenly among stretch widgets
+            // Pass 3. distribute remaining width evenly among stretch widgets
             // This a very dumb way of doing this, but good enough for now since there should never
-            // more than a few units of left over height.
+            // more than a few units of left over width.
             int i = 0;
-            while (remainingHeight > 0) {
+            while (remainingWidth > 0) {
                 int idx = i % widgets.Count;
-                if (widgets[idx].StretchVertical > 0) {
-                    widgets[idx].Resize(widgets[idx].GetWidth(), widgets[idx].GetHeight() + 1);
-                    remainingHeight -= 1;
+                if (widgets[idx].StretchHorizontal > 0) {
+                    widgets[idx].Resize(widgets[idx].GetWidth() + 1, widgets[idx].GetHeight());
+                    remainingWidth -= 1;
                     
                     if (idx + 1 < widgets.Count) {
-                        widgets[idx + 1].Nudge(0, 1);
+                        widgets[idx + 1].Nudge(1, 0);
                     }
                 }
 
