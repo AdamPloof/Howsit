@@ -11,12 +11,12 @@ public class Label : AbstractWidget {
     private string _content;
     private CellStyle? _style;
 
-    public Label(string content) : base() {
+    public Label(IWidget? parent, string content) : base(parent) {
         _content = content;
         _style = null;
     }
 
-    public Label(string content, CellStyle style) : base() {
+    public Label(IWidget? parent, string content, CellStyle style) : base(parent) {
         _content = content;
         _style = style;
     }

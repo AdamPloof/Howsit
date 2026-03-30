@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using Howsit.UI;
 using Howsit.UI.Layout;
 
@@ -12,16 +11,9 @@ namespace Howsit.UI.Widgets;
 /// </summary>
 public class Container : AbstractWidget, IContainer {
     private ILayout _layout;
-    private List<IWidget> _children;
 
-    public Container(ILayout layout) {
+    public Container(IWidget? parent, ILayout layout) : base(parent) {
         _layout = layout;
-        _children = new List<IWidget>();
-    }
-
-    /// <inheritdoc />
-    public void AddChild(IWidget child) {
-        _children.Add(child);
     }
 
     /// <inheritdoc />

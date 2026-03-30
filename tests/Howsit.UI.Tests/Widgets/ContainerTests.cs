@@ -9,12 +9,11 @@ namespace Howsit.UI.Tests.Widgets;
 public class ContainerTests {
     [Fact]
     public void SingleWidgetPlacedTopLeft() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 3);
 
-        Label w = new Label(new string('a', 9));
+        Label w = new Label(c, new string('a', 9));
         w.BoundingBox = new Rect(0, 0, 3, 3);
-        c.AddChild(w);
 
         Cell[] buffer = c.Paint();
 
@@ -36,12 +35,11 @@ public class ContainerTests {
 
     [Fact]
     public void SingleWidgetPlacedTopCenter() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 3);
 
-        Label w = new Label(new string('a', 4));
+        Label w = new Label(c, new string('a', 4));
         w.BoundingBox = new Rect(1, 0, 2, 2);
-        c.AddChild(w);
 
         Cell[] buffer = c.Paint();
 
@@ -63,12 +61,11 @@ public class ContainerTests {
 
     [Fact]
     public void SingleWidgetPlacedTopRight() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 3);
 
-        Label w = new Label(new string('a', 4));
+        Label w = new Label(c, new string('a', 4));
         w.BoundingBox = new Rect(2, 0, 2, 2);
-        c.AddChild(w);
 
         Cell[] buffer = c.Paint();
 
@@ -90,12 +87,11 @@ public class ContainerTests {
 
     [Fact]
     public void SingleWidgetPlacedCenter() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 4);
 
-        Label w = new Label(new string('a', 4));
+        Label w = new Label(c, new string('a', 4));
         w.BoundingBox = new Rect(1, 1, 2, 2);
-        c.AddChild(w);
 
         Cell[] buffer = c.Paint();
 
@@ -122,12 +118,11 @@ public class ContainerTests {
 
     [Fact]
     public void SingleWidgetPlacedBottomCenter() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 3);
 
-        Label w = new Label(new string('a', 4));
+        Label w = new Label(c, new string('a', 4));
         w.BoundingBox = new Rect(1, 1, 2, 2);
-        c.AddChild(w);
 
         Cell[] buffer = c.Paint();
 
@@ -149,17 +144,13 @@ public class ContainerTests {
 
     [Fact]
     public void VerticalAlignWidgetsPlaced() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 4);
 
-        Label wA = new Label(new string('a', 4));
+        Label wA = new Label(c, new string('a', 4));
         wA.BoundingBox = new Rect(0, 0, 2, 2);
-        c.AddChild(wA);
-
-        Label wB = new Label(new string('b', 4));
+        Label wB = new Label(c, new string('b', 4));
         wB.BoundingBox = new Rect(0, 2, 2, 2);
-        c.AddChild(wB);
-
         Cell[] buffer = c.Paint();
 
         Assert.Equal('a', buffer[0].Value);
@@ -185,17 +176,13 @@ public class ContainerTests {
 
     [Fact]
     public void HorizontalAlignWidgetsPlaced() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 3);
 
-        Label wA = new Label(new string('a', 4));
+        Label wA = new Label(c, new string('a', 4));
         wA.BoundingBox = new Rect(0, 0, 2, 2);
-        c.AddChild(wA);
-
-        Label wB = new Label(new string('b', 4));
+        Label wB = new Label(c, new string('b', 4));
         wB.BoundingBox = new Rect(2, 0, 2, 2);
-        c.AddChild(wB);
-
         Cell[] buffer = c.Paint();
 
         Assert.Equal('a', buffer[0].Value);
@@ -216,17 +203,13 @@ public class ContainerTests {
 
     [Fact]
     public void DiagonalOffsetWidgetsPlaced() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 4);
 
-        Label wA = new Label(new string('a', 4));
+        Label wA = new Label(c, new string('a', 4));
         wA.BoundingBox = new Rect(0, 0, 2, 2);
-        c.AddChild(wA);
-
-        Label wB = new Label(new string('b', 4));
+        Label wB = new Label(c, new string('b', 4));
         wB.BoundingBox = new Rect(2, 2, 2, 2);
-        c.AddChild(wB);
-
         Cell[] buffer = c.Paint();
 
         Assert.Equal('a', buffer[0].Value);
@@ -252,21 +235,15 @@ public class ContainerTests {
 
     [Fact]
     public void GridAlignWidgetsPlaced() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 4);
 
-        Label wA = new Label(new string('a', 4));
+        Label wA = new Label(c, new string('a', 4));
         wA.BoundingBox = new Rect(0, 0, 2, 2);
-        c.AddChild(wA);
-
-        Label wB = new Label(new string('b', 4));
+        Label wB = new Label(c, new string('b', 4));
         wB.BoundingBox = new Rect(2, 0, 2, 2);
-        c.AddChild(wB);
-
-        Label wC = new Label(new string('c', 8));
+        Label wC = new Label(c, new string('c', 8));
         wC.BoundingBox = new Rect(0, 2, 4, 2);
-        c.AddChild(wC);
-
         Cell[] buffer = c.Paint();
 
         Assert.Equal('a', buffer[0].Value);
@@ -292,21 +269,15 @@ public class ContainerTests {
 
     [Fact]
     public void GridOffsetWidgetsPlaced() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 4);
 
-        Label wA = new Label(new string('a', 4));
+        Label wA = new Label(c, new string('a', 4));
         wA.BoundingBox = new Rect(0, 0, 2, 2);
-        c.AddChild(wA);
-
-        Label wB = new Label(new string('b', 4));
+        Label wB = new Label(c, new string('b', 4));
         wB.BoundingBox = new Rect(2, 0, 2, 2);
-        c.AddChild(wB);
-
-        Label wC = new Label(new string('c', 4));
+        Label wC = new Label(c, new string('c', 4));
         wC.BoundingBox = new Rect(2, 2, 2, 2);
-        c.AddChild(wC);
-
         Cell[] buffer = c.Paint();
 
         Assert.Equal('a', buffer[0].Value);
@@ -332,22 +303,19 @@ public class ContainerTests {
     
     [Fact]
     public void EmptyDimensionsThrows() {
-        Container c = new Container(new MockLayout());
-        Label w = new Label(new string('a', 9));
+        Container c = new Container(null, new MockLayout());
+        Label w = new Label(c, new string('a', 9));
         w.BoundingBox = new Rect(0, 0, 3, 3);
-        c.AddChild(w);
 
         Assert.Throws<Exception>(() => c.Paint());
     }
 
     [Fact]
     public void WidgetPositionOverflowsBufferThrows() {
-        Container c = new Container(new MockLayout());
+        Container c = new Container(null, new MockLayout());
         c.BoundingBox = new Rect(0, 0, 4, 3);
-
-        Label w = new Label(new string('a', 9));
+        Label w = new Label(c, new string('a', 9));
         w.BoundingBox = new Rect(3, 0, 3, 3);
-        c.AddChild(w);
 
         Assert.Throws<Exception>(() => c.Paint());
     }

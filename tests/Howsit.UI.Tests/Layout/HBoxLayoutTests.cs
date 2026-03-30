@@ -13,7 +13,7 @@ namespace Howsit.UI.Tests.Layout;
 public class HBoxLayoutTests {
     [Fact]
     public void SingleWidgetNoStretch() {
-        Label label = new Label("Test") { SizeHint = new Size(10, 10) };
+        Label label = new Label(null, "Test") { SizeHint = new Size(10, 10) };
         List<IWidget> widgets = [];
         widgets.Add(label);
         HBoxLayout layout = new();
@@ -29,8 +29,8 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void MultiWidgetNoStretch() {
-        Label labelA = new Label("Test A") { SizeHint = new Size(15, 15) };
-        Label labelB = new Label("Test B") { SizeHint = new Size(10, 10) };
+        Label labelA = new Label(null, "Test A") { SizeHint = new Size(15, 15) };
+        Label labelB = new Label(null, "Test B") { SizeHint = new Size(10, 10) };
 
         List<IWidget> widgets = [];
         widgets.Add(labelA);
@@ -54,7 +54,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void SingleWidgetStretchVertical() {
-        Label label = new Label("Test") {
+        Label label = new Label(null, "Test") {
             SizeHint = new Size(10, 10),
             StretchVertical = 1,
         };
@@ -73,7 +73,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void SingleWidgetStretchHorizontal() {
-        Label label = new Label("Test") {
+        Label label = new Label(null, "Test") {
             SizeHint = new Size(10, 10),
             StretchHorizontal = 1,
         };
@@ -92,7 +92,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void SingleWidgetStretchAll() {
-        Label label = new Label("Test") {
+        Label label = new Label(null, "Test") {
             SizeHint = new Size(10, 10),
             StretchVertical = 1,
             StretchHorizontal = 1,
@@ -112,12 +112,12 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void MultiWidgetStretchVertical() {
-        Label labelA = new Label("Test A") {
+        Label labelA = new Label(null, "Test A") {
             SizeHint = new Size(10, 10),
             StretchVertical = 1,
             StretchHorizontal = 1,
         };
-        Label labelB = new Label("Test B") {
+        Label labelB = new Label(null, "Test B") {
             SizeHint = new Size(15, 15),
             StretchVertical = 1,
             StretchHorizontal = 1,
@@ -144,12 +144,12 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void MultiWidgetStretchAll() {
-        Label labelA = new Label("Test A") {
+        Label labelA = new Label(null, "Test A") {
             SizeHint = new Size(10, 10),
             StretchVertical = 1,
             StretchHorizontal = 1,
         };
-        Label labelB = new Label("Test B") {
+        Label labelB = new Label(null, "Test B") {
             SizeHint = new Size(15, 15),
             StretchVertical = 1,
             StretchHorizontal = 1,
@@ -176,12 +176,12 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void MultiWidgetStretchProportional() {
-        Label labelA = new Label("Test A") {
+        Label labelA = new Label(null, "Test A") {
             SizeHint = new Size(10, 10),
             StretchVertical = 1,
             StretchHorizontal = 1,
         };
-        Label labelB = new Label("Test B") {
+        Label labelB = new Label(null, "Test B") {
             SizeHint = new Size(10, 10),
             StretchVertical = 1,
             StretchHorizontal = 2,
@@ -208,7 +208,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void SingleWidgetHandleOverflow() {
-        Label label = new Label("Test") { SizeHint = new Size(30, 30) };
+        Label label = new Label(null, "Test") { SizeHint = new Size(30, 30) };
         List<IWidget> widgets = [];
         widgets.Add(label);
         HBoxLayout layout = new();
@@ -224,7 +224,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void SingleWidgetHandleOverflowDoesNotStretch() {
-        Label label = new Label("Test") {
+        Label label = new Label(null, "Test") {
             SizeHint = new Size(30, 30),
             StretchHorizontal = 1,
             StretchVertical = 1,
@@ -244,8 +244,8 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void MultiWidgetHandleOverflow() {
-        Label labelA = new Label("Test A") { SizeHint = new Size(15, 15) };
-        Label labelB = new Label("Test B") { SizeHint = new Size(10, 10) };
+        Label labelA = new Label(null, "Test A") { SizeHint = new Size(15, 15) };
+        Label labelB = new Label(null, "Test B") { SizeHint = new Size(10, 10) };
 
         List<IWidget> widgets = [];
         widgets.Add(labelA);
@@ -269,7 +269,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void SingleWidgetNoMinSizeStretches() {
-        Label label = new Label("Test") { StretchHorizontal = 1, StretchVertical = 1 };
+        Label label = new Label(null, "Test") { StretchHorizontal = 1, StretchVertical = 1 };
         List<IWidget> widgets = [];
         widgets.Add(label);
         HBoxLayout layout = new();
@@ -285,8 +285,8 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void MultiWidgetNoMinSizeStretch() {
-        Label labelA = new Label("Test A") { StretchHorizontal = 1, StretchVertical = 1 };
-        Label labelB = new Label("Test B") { StretchHorizontal = 2, StretchVertical = 2 };
+        Label labelA = new Label(null, "Test A") { StretchHorizontal = 1, StretchVertical = 1 };
+        Label labelB = new Label(null, "Test B") { StretchHorizontal = 2, StretchVertical = 2 };
         List<IWidget> widgets = [];
         widgets.Add(labelA);
         widgets.Add(labelB);
@@ -310,7 +310,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void EmptyBoundsThrows() {
-        Label label = new Label("Test") { SizeHint = new Size(10, 10) };
+        Label label = new Label(null, "Test") { SizeHint = new Size(10, 10) };
         List<IWidget> widgets = [];
         widgets.Add(label);
         HBoxLayout layout = new();
@@ -320,7 +320,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void InvalidBoundsPositionThrows() {
-        Label label = new Label("Test") { SizeHint = new Size(10, 10) };
+        Label label = new Label(null, "Test") { SizeHint = new Size(10, 10) };
         List<IWidget> widgets = [];
         widgets.Add(label);
         HBoxLayout layout = new();
@@ -330,7 +330,7 @@ public class HBoxLayoutTests {
 
     [Fact]
     public void WidgetWithEmptySizeHintNoStretchThrows() {
-        Label label = new Label("Test");
+        Label label = new Label(null, "Test");
         List<IWidget> widgets = [];
         widgets.Add(label);
         HBoxLayout layout = new();

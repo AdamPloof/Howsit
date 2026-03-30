@@ -14,6 +14,10 @@ public enum BorderType {
 /// <summary>
 /// Border props for an element.
 /// </summary>
+/// <remarks>
+/// Borders are always a single character wide. If you need additional space between widgets,
+/// use padding.
+/// </remarks>
 public record struct Border {
     /// <summary>
     /// Default constructor, all borders set to None

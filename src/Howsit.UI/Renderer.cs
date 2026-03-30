@@ -8,6 +8,9 @@ using Howsit.UI.Style;
 
 namespace Howsit.UI;
 
+/// <summary>
+/// Renderer is the main class for drawing Cell buffers to the screen.
+/// </summary>
 public class Renderer : IRenderer {
     private enum State {
         StartSpan,

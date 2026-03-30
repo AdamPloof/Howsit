@@ -1,11 +1,18 @@
 using System;
+using System.Collections.Generic;
 
 using Howsit.UI.Drawing;
 using Howsit.UI.Layout;
 
 namespace Howsit.UI.Widgets;
 
+/// <summary>
+/// AbstractWidget provides a base implementation for the most common parts of a widget.
+/// Most widgets will inherity from this rather than fully implementing IWidget from scratch.
+/// </summary>
 public abstract class AbstractWidget : IWidget {
+    public IWidget? Parent { get; set; }
+
     /// <inheritdoc />
     public bool Visible { get; set; }
 
@@ -32,19 +39,40 @@ public abstract class AbstractWidget : IWidget {
 
     protected Guid _id;
 
+    protected List<IWidget> _children;
+
     /// <summary>
     /// All Widgets that inherit from AbstractWidget should call the base constructor
     /// to ensure that its Id is set.
     /// </summary>
-    public AbstractWidget() {
-        _id = Guid.NewGuid();
+    public AbstractWidget(IWidget? parent) {
         BoundingBox = new Rect();
         SizeHint = Size.Empty();
+        _id = Guid.NewGuid();
+        _children = new List<IWidget>();
+
+        // Attaching the parent to the child from the constructor this way is ok for now. If
+        // the attach step becomes more involved and depends on a fully initialized child, this
+        // might require changing.
+        Parent = parent;
+        parent?.AddChild(this);
     }
 
     /// <inheritdoc />
     public Guid GetId() {
         return _id;
+    }
+
+    public void AddChild(IWidget child) {
+        if (child.Parent != this) {
+            child.Parent = this;
+        }
+
+        if (_children.Find(c => c.GetId() == child.GetId()) is not null) {
+            return;
+        }
+
+        _children.Add(child);
     }
 
     /// <inheritdoc />
@@ -82,15 +110,39 @@ public abstract class AbstractWidget : IWidget {
     public void Nudge(int xAmount, int yAmount) {
         BoundingBox.X += xAmount;
         BoundingBox.Y += yAmount;
-
-        // TODO: should probably add in IsValid method and make sure that the
-        // coodinates are valid after moving/nudging
     }
-    
+
     /// <inheritdoc />
     public void Resize(int width, int height) {
         BoundingBox.Width = width;
         BoundingBox.Height = height;
+    }
+
+    /// <inheritdoc />
+    public Rect ContentArea() {
+        int width = BoundingBox.Width - Padding.Left - Padding.Right;
+        int x = BoundingBox.X + Padding.Left;
+        if (Border.Left != BorderType.None) {
+            width -= 1;
+            x += 1;
+        }
+
+        if (Border.Right != BorderType.None) {
+            width -= 1;
+        }
+
+        int height = BoundingBox.Height - Padding.Bottom - Padding.Top;
+        int y = BoundingBox.Y + Padding.Top;
+        if (Border.Top != BorderType.None) {
+            height -= 1;
+            y += 1;
+        }
+
+        if (Border.Bottom != BorderType.None) {
+            height -= 1;
+        }
+
+        return new Rect(x, y, width, height);
     }
 
     /// <inheritdoc />

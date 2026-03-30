@@ -17,6 +17,16 @@ namespace Howsit.UI.Widgets;
 /// </remarks>
 public interface IWidget {
     /// <summary>
+    /// The widget's parent. A null parent indicates the widget is unattached to the widget tree
+    /// or the widget is the root node.
+    /// </summary>
+    /// <remarks>
+    /// It is very unlikely that would need to update a widgets parent directly after
+    /// it has been created.
+    /// </remarks>
+    public IWidget? Parent { get; set; }
+
+    /// <summary>
     /// Indicates whether the widget should be painted or not. Hidden widgets
     /// do not take up any space in the layout.
     /// </summary>
@@ -83,6 +93,16 @@ public interface IWidget {
     public Guid GetId();
 
     /// <summary>
+    /// Adds a child widget.
+    /// </summary>
+    /// <remarks>
+    /// You should not need to manually add child widgets. The widget tree will be built by
+    /// passing the parent to new widgets.
+    /// </remarks>
+    /// <param name="widget"></param>
+    public void AddChild(IWidget widget);
+
+    /// <summary>
     /// Set the bounding box of the widget. Used by layouts to allocate space.
     /// </summary>
     /// <param name="rect"></param>
@@ -144,6 +164,12 @@ public interface IWidget {
     /// <param name="x"></param>
     /// <param name="y"></param>
     public void Resize(int width, int height);
+
+    /// <summary>
+    /// Returns the inner rect inside the widgets border and padding. 
+    /// </summary>
+    /// <returns></returns>
+    public Rect ContentArea();
 
     /// <summary>
     /// Render the cell to a cell buffer.

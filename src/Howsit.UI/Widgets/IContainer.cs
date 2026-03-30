@@ -1,14 +1,10 @@
-using System.Collections.Generic;
-
 namespace Howsit.UI.Widgets;
 
+/// <summary>
+/// Containers are a special type of widget that are responsible for managing
+/// the layout of their children.
+/// </summary>
 public interface IContainer {
-    /// <summary>
-    /// Add a child widget to the container
-    /// </summary>
-    /// <param name="child"></param>
-    public void AddChild(IWidget child);
-
     /// <summary>
     /// Get and set the bouding boxes for the container's children. 
     /// </summary>
