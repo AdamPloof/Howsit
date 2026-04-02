@@ -122,23 +122,23 @@ public abstract class AbstractWidget : IWidget {
     public Rect ContentArea() {
         int width = BoundingBox.Width - Padding.Left - Padding.Right;
         int x = BoundingBox.X + Padding.Left;
-        if (Border.Left != BorderType.None) {
+        if (Border.Left != BorderStyle.None) {
             width -= 1;
             x += 1;
         }
 
-        if (Border.Right != BorderType.None) {
+        if (Border.Right != BorderStyle.None) {
             width -= 1;
         }
 
         int height = BoundingBox.Height - Padding.Bottom - Padding.Top;
         int y = BoundingBox.Y + Padding.Top;
-        if (Border.Top != BorderType.None) {
+        if (Border.Top != BorderStyle.None) {
             height -= 1;
             y += 1;
         }
 
-        if (Border.Bottom != BorderType.None) {
+        if (Border.Bottom != BorderStyle.None) {
             height -= 1;
         }
 

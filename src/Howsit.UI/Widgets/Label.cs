@@ -1,5 +1,7 @@
 using System;
 using Howsit.UI;
+using Howsit.UI.Drawing;
+using Howsit.UI.Layout;
 using Howsit.UI.Style;
 
 namespace Howsit.UI.Widgets;
@@ -9,11 +11,11 @@ namespace Howsit.UI.Widgets;
 /// </summary>
 public class Label : AbstractWidget {
     private string _content;
-    private CellStyle? _style;
+    private CellStyle _style;
 
     public Label(IWidget? parent, string content) : base(parent) {
         _content = content;
-        _style = null;
+        _style = new CellStyle();
     }
 
     public Label(IWidget? parent, string content, CellStyle style) : base(parent) {
@@ -25,7 +27,7 @@ public class Label : AbstractWidget {
         _content = content;
     }
 
-    public void SetStyle(CellStyle? style) {
+    public void SetStyle(CellStyle style) {
         _style = style;
     }
 
@@ -34,10 +36,23 @@ public class Label : AbstractWidget {
             return new Cell[0];
         }
 
-        if (_style is CellStyle s) {
-            return TextBuffer.FromString(_content, BoundingBox.Width, BoundingBox.Height, s);
-        } else {
-            return TextBuffer.FromString(_content, BoundingBox.Width, BoundingBox.Height);
+        Cell[] buffer = Cell.EmptyCells(BoundingBox.Width * BoundingBox.Height);
+        if (!Border.IsNone()) {
+            BorderPainter.ApplyBorder(buffer, BoundingBox.Width, BoundingBox.Height, Border);
         }
+
+        Rect contentRect = ContentArea();
+        Cell[] contentCells = TextBuffer.FromString(
+            _content,
+            contentRect.Width,
+            contentRect.Height,
+            _style
+        );
+        int contentStart = contentRect.X + (contentRect.Y * contentRect.Width);
+        Array.Copy(contentCells, 0, buffer, contentStart, contentCells.Length);
+
+        // TODO: cache buffer
+
+        return buffer;
     }
 }

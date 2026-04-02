@@ -19,6 +19,18 @@ public static class TextBuffer {
         return FromString(content, width, height, new CellStyle());
     }
 
+    /// <summary>
+    /// Overload that takes in a CellStyle that will be used to format the text content
+    /// </summary>
+    /// <remarks>
+    /// Eventually this method should accept some kind of formated text content that allows
+    /// for embedding style content within a string. For now, style is all or nothing.
+    /// </remarks>
+    /// <param name="content"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <param name="style"></param>
+    /// <returns></returns>
     public static Cell[] FromString(string content, int width, int height, CellStyle style) {
         Cell[] buffer = Cell.EmptyCells(width * height);
         int row = 0;
