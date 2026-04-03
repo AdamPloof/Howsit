@@ -121,7 +121,7 @@ public abstract class AbstractWidget : IWidget {
     /// <inheritdoc />
     public Rect ContentArea() {
         int width = BoundingBox.Width - Padding.Left - Padding.Right;
-        int x = BoundingBox.X + Padding.Left;
+        int x = Padding.Left;
         if (Border.Left != BorderStyle.None) {
             width -= 1;
             x += 1;
@@ -132,7 +132,7 @@ public abstract class AbstractWidget : IWidget {
         }
 
         int height = BoundingBox.Height - Padding.Bottom - Padding.Top;
-        int y = BoundingBox.Y + Padding.Top;
+        int y = Padding.Top;
         if (Border.Top != BorderStyle.None) {
             height -= 1;
             y += 1;

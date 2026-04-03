@@ -55,6 +55,7 @@ public static class BorderPainter {
         }
 
         // TODO: what about color?
+        // TODO: could probably draw buffers in single pass
         ApplyHorizontalBorders(buffer, width, height, border);
         ApplyVerticalBorders(buffer, width, height, border);
     }
