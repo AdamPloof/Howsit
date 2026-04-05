@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Howsit.UI.Widgets;
+
 namespace Howsit.UI.Layout;
 
 /// <summary>
@@ -10,6 +13,10 @@ namespace Howsit.UI.Layout;
 ///   in the layout.
 /// - Handling window resizes and updating the allocated space
 /// </remarks>
-public interface ILayoutManager {
-    public void Allocate();
+public interface ILayout {
+    /// <summary>
+    /// Calculate the bounding boxes for an collection of widgets in order to
+    /// fit within their parent's bounding box.
+    /// </summary>
+    public void Arrange(IReadOnlyList<IWidget> widgets, Rect bounds);
 }

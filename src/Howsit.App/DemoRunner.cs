@@ -8,6 +8,9 @@ using Howsit.UI.Style;
 
 namespace Howsit.App;
 
+/// <summary>
+/// Very basic Demo app to view some output from the renderer.
+/// </summary>
 public class DemoRunner {
     private const string LineSeparator = ";;";
     private const int FrameRateMs = 1000;
@@ -28,7 +31,7 @@ public class DemoRunner {
             if (now >= nextFrameAt) {
                 string frame = frames[frameIdx];
                 Cell[] buffer = ColorizeBuffer(
-                    Renderer.StringToBuffer(frame, Console.WindowWidth, Console.WindowHeight)
+                    TextBuffer.FromString(frame, Console.WindowWidth, Console.WindowHeight)
                 );
                 _renderer.Render(buffer, Console.WindowWidth, Console.WindowHeight);
                 frameIdx = frameIdx == (frames.Count - 1) ? 0 : frameIdx + 1;
