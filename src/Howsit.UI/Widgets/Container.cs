@@ -9,7 +9,7 @@ namespace Howsit.UI.Widgets;
 /// Base container type. Containers are used to group widgets into a layout section.
 /// Their layout style/orientation is determined by the ILayout type provided.
 /// </summary>
-public class Container : AbstractWidget, IContainer {
+public class Container : Widget, IContainer {
     private ILayout _layout;
 
     public Container(IWidget? parent, ILayout layout) : base(parent) {

@@ -9,7 +9,7 @@ namespace Howsit.UI.Widgets;
 /// <summary>
 /// Basic Label widget for displaying static text
 /// </summary>
-public class Label : AbstractWidget {
+public class Label : Widget {
     private string _content;
     private CellStyle _style;
 

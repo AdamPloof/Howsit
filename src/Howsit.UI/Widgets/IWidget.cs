@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 
 using Howsit.UI;
 using Howsit.UI.Drawing;
 using Howsit.UI.Layout;
+using Howsit.UI.Events;
 
 namespace Howsit.UI.Widgets;
 
@@ -93,6 +95,12 @@ public interface IWidget {
     public Guid GetId();
 
     /// <summary>
+    /// The child widgets.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<IWidget> GetChildren();
+
+    /// <summary>
     /// Adds a child widget.
     /// </summary>
     /// <remarks>
@@ -176,4 +184,23 @@ public interface IWidget {
     /// </summary>
     /// <returns></returns>
     public Cell[] Paint();
+
+    /// <summary>
+    /// Register an event handler for a specific event type. Multiple handlers can be registered
+    /// for the same event.
+    /// </summary>
+    /// <typeparam name="TEvent"></typeparam>
+    /// <param name="handler"></param>
+    public void AddHandler<TEvent>(Action<TEvent> handler) where TEvent : UiEvent;
+
+    /// <summary>
+    /// Forward an event along to a registered handler. If no handler is registered for
+    /// the event type, it is ignored.
+    /// </summary>
+    /// <remarks>
+    /// When multiple handlers are registered for the same event, they will be called in the order
+    /// that they were added.
+    /// </remarks>
+    /// <param name="uiEvent"></param>
+    public void HandleEvent(UiEvent uiEvent);
 }
