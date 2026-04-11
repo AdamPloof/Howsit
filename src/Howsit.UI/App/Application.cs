@@ -68,9 +68,9 @@ public class Application : IApplication {
     }
     
     private void MainLoop() {
-        int newWidth = Console.WindowWidth;
-        int newHeight = Console.WindowHeight;
         while (_isRunning) {
+            int newWidth = Console.WindowWidth;
+            int newHeight = Console.WindowHeight;
             if (newWidth != _winWidth || newHeight != _winHeight) {
                 _winWidth = newWidth;
                 _winHeight = newHeight;

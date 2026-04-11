@@ -185,7 +185,7 @@ public class Renderer : IRenderer {
     /// </remarks>
     /// <param name="span"></param>
     private void DrawSpan(CellSpan span) {
-        Console.Out.Write(Ansi.MoveCursorTo(span.Row, span.StartColumn));
+        Console.Out.Write(Ansi.MoveCursorTo(span.Row + 1, span.StartColumn +1));
         string content;
         if (span.Style is not null) {
             content = Ansi.EscapeSequence(

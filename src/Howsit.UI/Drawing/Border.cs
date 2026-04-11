@@ -203,11 +203,11 @@ public record struct Border {
     /// </summary>
     /// <returns></returns>
     public bool IsNone() {
-        if (Top != BorderStyle.None) return true;
-        if (Bottom != BorderStyle.None) return true;
-        if (Left != BorderStyle.None) return true;
-        if (Right != BorderStyle.None) return true;
+        if (Top != BorderStyle.None) return false;
+        if (Bottom != BorderStyle.None) return false;
+        if (Left != BorderStyle.None) return false;
+        if (Right != BorderStyle.None) return false;
 
-        return false;
+        return true;
     }
 }

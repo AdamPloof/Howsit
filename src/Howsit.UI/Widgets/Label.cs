@@ -18,12 +18,14 @@ public class Label : Widget {
         _content = content;
         _style = new CellStyle();
         _cachedBuffer = [];
+        HandleContentChanged();
     }
 
     public Label(IWidget? parent, string content, CellStyle style) : base(parent) {
         _content = content;
         _style = style;
         _cachedBuffer = [];
+        HandleContentChanged();
     }
 
     public void SetContent(string content) {
@@ -55,9 +57,64 @@ public class Label : Widget {
             contentRect.Height,
             _style
         );
-        int contentStart = contentRect.X + (contentRect.Y * contentRect.Width);
-        Array.Copy(contentCells, 0, buffer, contentStart, contentCells.Length);
+
+        int col = contentRect.X;
+        int row = contentRect.Y;
+        for (int i = 0; i < contentCells.Length; i++) {
+            if (col - contentRect.X >= contentRect.Width) {
+                col = contentRect.X;
+                row++;
+            }
+
+            buffer[col + (row * BoundingBox.Width)] = contentCells[i];
+            col++;
+        }
+
+        IsDirty = false;
 
         return buffer;
+    }
+
+    /// <summary>
+    /// Calculate a new size hint to fit the content. If original size hint
+    /// has enough space then use the original.
+    /// </summary>
+    /// <param name="content"></param>
+    private void HandleContentChanged() {
+        Size newSize = Size.Empty();
+        foreach (char c in _content) {
+            if (c == '\r') {
+                // Break on \n, ignore \r in case of \r\n
+                continue;
+            }
+
+            if (c == '\n') {
+                newSize.Height += 1;
+            } else {
+                newSize.Width += 1;
+            }
+        }
+
+        newSize.Width += Padding.Left + Padding.Right;
+        newSize.Height += Padding.Top + Padding.Bottom;
+        if (Border.Left != BorderStyle.None) {
+            newSize.Width += 1;
+        }
+
+        if (Border.Right != BorderStyle.None) {
+            newSize.Width += 1;
+        }
+
+        if (Border.Top != BorderStyle.None) {
+            newSize.Height += 1;
+        }
+
+        if (Border.Bottom != BorderStyle.None) {
+            newSize.Height += 1;
+        }
+
+        if (newSize.Width > SizeHint.Width || newSize.Height > SizeHint.Height) {
+            SizeHint = newSize;
+        }
     }
 }

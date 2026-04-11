@@ -2,6 +2,7 @@
 using Howsit.UI.Layout;
 using Howsit.UI.Widgets;
 using Howsit.UI.Drawing;
+using Howsit.UI.Style;
 using Howsit.UI.Events;
 using Howsit.UI.App;
 
@@ -11,7 +12,11 @@ Container root = new Container(null, layout) {
     StretchHorizontal = 1,
     Padding = new Padding(1)
 };
-Label label = new Label(root, "Howsitgoinnotsobadgoodnyou?") {
+Label label = new Label(
+    root,
+    "Howsitgoinnotsobadgoodnyou?",
+    new CellStyle(TextFormat.Normal, new Color(255, 0, 0))
+) {
     StretchHorizontal = 1,
     StretchVertical = 1,
     Border = new Border(BorderStyle.Solid)

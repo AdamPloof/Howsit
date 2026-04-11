@@ -52,6 +52,9 @@ public static class Ansi {
     /// <summary>
     /// Move the cursor to the screen position.
     /// </summary>
+    /// <remarks>
+    /// Remember that screen positions are 1-based, not zero-based.
+    /// </remarks>
     /// <param name="row"></param>
     /// <param name="col"></param>
     /// <returns></returns>

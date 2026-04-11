@@ -73,6 +73,8 @@ public class Container : Widget, IContainer {
             }
         }
 
+        IsDirty = false;
+
         return buffer;
     }
 
