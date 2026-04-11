@@ -12,6 +12,7 @@ namespace Howsit.UI.Widgets;
 /// Most widgets will inherity from this rather than fully implementing IWidget from scratch.
 /// </summary>
 public abstract class Widget : IWidget {
+    /// <inheritdoc />
     public IWidget? Parent { get; set; }
 
     /// <inheritdoc />
@@ -38,6 +39,9 @@ public abstract class Widget : IWidget {
     /// <inheritdoc />
     public Rect BoundingBox { get; set; }
 
+    /// <inheritdoc />
+    public bool IsDirty { get; set; }
+
     /// <summary>
     /// Unique identifier for this Widget
     /// </summary>
@@ -58,8 +62,10 @@ public abstract class Widget : IWidget {
     /// to ensure that its Id is set.
     /// </summary>
     public Widget(IWidget? parent) {
-        BoundingBox = new Rect();
         SizeHint = Size.Empty();
+        BoundingBox = new Rect();
+        IsDirty = true;
+
         _id = Guid.NewGuid();
         _children = new List<IWidget>();
 

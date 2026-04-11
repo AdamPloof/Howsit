@@ -2,6 +2,7 @@ using System;
 
 using Howsit.UI;
 using Howsit.UI.Layout;
+using Howsit.UI.Events;
 
 namespace Howsit.UI.Widgets;
 
@@ -13,8 +14,14 @@ public class Container : Widget, IContainer {
     private ILayout _layout;
 
     public Container(IWidget? parent, ILayout layout) : base(parent) {
+        LayoutIsDirty = true;
         _layout = layout;
+
+        AddHandler<ResizeEvent>(HandleResize);
     }
+
+    /// <inheritdoc />
+    public bool LayoutIsDirty { get; set; }
 
     /// <inheritdoc />
     public void PerformLayout() {
@@ -23,6 +30,7 @@ public class Container : Widget, IContainer {
         }
 
         _layout.Arrange(_children, BoundingBox);
+        LayoutIsDirty = false;
     }
 
     /// <summary>
@@ -37,6 +45,10 @@ public class Container : Widget, IContainer {
     public override Cell[] Paint() {
         if (BoundingBox.IsEmpty()) {
             throw new Exception("Unable to paint widget. Bounds is empty");
+        }
+
+        if (LayoutIsDirty) {
+            PerformLayout();
         }
 
         Cell[] buffer = Cell.EmptyCells(BoundingBox.Width * BoundingBox.Height);
@@ -62,5 +74,16 @@ public class Container : Widget, IContainer {
         }
 
         return buffer;
+    }
+
+    public void HandleResize(ResizeEvent resizeEvent) {
+        if (Parent is null) {
+            // This is the root widget, reset bounds to window dimensions
+            BoundingBox.Width = resizeEvent.Width;
+            BoundingBox.Height = resizeEvent.Height;
+        }
+
+        LayoutIsDirty = true;
+        IsDirty = true;
     }
 }

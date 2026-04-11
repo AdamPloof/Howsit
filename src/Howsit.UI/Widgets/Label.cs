@@ -12,15 +12,18 @@ namespace Howsit.UI.Widgets;
 public class Label : Widget {
     private string _content;
     private CellStyle _style;
+    private Cell[] _cachedBuffer;
 
     public Label(IWidget? parent, string content) : base(parent) {
         _content = content;
         _style = new CellStyle();
+        _cachedBuffer = [];
     }
 
     public Label(IWidget? parent, string content, CellStyle style) : base(parent) {
         _content = content;
         _style = style;
+        _cachedBuffer = [];
     }
 
     public void SetContent(string content) {
@@ -32,6 +35,10 @@ public class Label : Widget {
     }
 
     public override Cell[] Paint() {
+        if (!IsDirty) {
+            return _cachedBuffer;
+        }
+
         if (BoundingBox.IsEmpty()) {
             return new Cell[0];
         }
@@ -50,8 +57,6 @@ public class Label : Widget {
         );
         int contentStart = contentRect.X + (contentRect.Y * contentRect.Width);
         Array.Copy(contentCells, 0, buffer, contentStart, contentCells.Length);
-
-        // TODO: cache buffer
 
         return buffer;
     }

@@ -9,6 +9,12 @@ public static class Ansi {
 
     public const string Reset = ESC + "[0m";
 
+    public const string EnterAlternateScreen = "\u001b[?1049h";
+    public const string ExitAlternateScreen = "\u001b[?1049l";
+    public const string ClearScreenAndHome = "\u001b[2J\u001b[H";
+    public const string ClearToEndOfLine = "\u001b[K";
+    public const string ShowCursor = "\u001b[?25h";
+
     // SGR control codes
     public const int Bold          = 1;
     public const int Muted         = 2;

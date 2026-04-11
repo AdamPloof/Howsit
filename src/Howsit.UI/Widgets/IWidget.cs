@@ -89,6 +89,11 @@ public interface IWidget {
     public Rect BoundingBox { get; set; }
 
     /// <summary>
+    /// Indicates whether the widget requires repainting.
+    /// </summary>
+    public bool IsDirty { get; set; }
+
+    /// <summary>
     /// Get the widgets unique ID.
     /// </summary>
     /// <returns></returns>
