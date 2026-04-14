@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 using Howsit.UI.Widgets;
 using Howsit.UI.Layout;
 using Howsit.UI.Events;
+using Howsit.UI.Input;
 
 namespace Howsit.UI.App;
 
@@ -14,11 +16,22 @@ public class Application : IApplication {
     private IContainer _root;
     private IRenderer _renderer;
     private IEventDispatcher _dispatcher;
+    private IInputParser _inputParser;
     private int _winWidth;
     private int _winHeight;
     private bool _isRunning;
 
-    public Application(IContainer root, IRenderer renderer, IEventDispatcher dispatcher) {
+    /// <summary>
+    /// Registered event handlers.
+    /// </summary>
+    private readonly Dictionary<Type, List<Action<UiEvent>>> _handlers = [];
+
+    public Application(
+        IContainer root,
+        IRenderer renderer,
+        IEventDispatcher dispatcher,
+        IInputParser inputParser
+    ) {
         _winWidth = Console.WindowWidth;
         _winHeight = Console.WindowHeight;
 
@@ -26,8 +39,11 @@ public class Application : IApplication {
         _root.SetBounds(new Rect(0, 0, _winWidth, _winHeight));
         _renderer = renderer;
         _dispatcher = dispatcher;
+        _inputParser = inputParser;
 
         _isRunning = false;
+
+        InitializeHandlers();
     }
 
     /// <summary>
@@ -66,15 +82,26 @@ public class Application : IApplication {
             Console.Out.Flush();
         }
     }
-    
+
     private void MainLoop() {
         while (_isRunning) {
-            int newWidth = Console.WindowWidth;
-            int newHeight = Console.WindowHeight;
-            if (newWidth != _winWidth || newHeight != _winHeight) {
-                _winWidth = newWidth;
-                _winHeight = newHeight;
-                _dispatcher.Dispatch(_root, new ResizeEvent(_winWidth, _winHeight));
+            CheckForWindowResize();
+
+            IEnumerable<UiEvent> inputEvents = _inputParser.ReadAvailable();
+            foreach (UiEvent inputEvent in inputEvents) {
+                HandleApplicationEvent(inputEvent);
+                if (inputEvent.Handled) {
+                    continue;
+                }
+
+                // TODO: use focus manager to dispatch to focused widget
+                _dispatcher.Dispatch(_root, inputEvent);
+            }
+
+            if (!_isRunning) {
+                // Input could have caused an early exit so let's break out now
+                // to avoid drawing an extra frame and waiting for the throttle timeout.
+                break;
             }
 
             if (NeedsDraw(_root)) {
@@ -82,17 +109,46 @@ public class Application : IApplication {
                 _renderer.Render(buffer, _winWidth, _winHeight);
             }
 
-            // Exit via Esc or ctrl+c
-            while (Console.KeyAvailable) {
-                var key = Console.ReadKey(intercept: true);
-                var isEscape = key.Key == ConsoleKey.Escape;
-                var isCtrlC = key.Key == ConsoleKey.C && key.Modifiers.HasFlag(ConsoleModifiers.Control);
-                if (isEscape || isCtrlC) {
+            Thread.Sleep(FRAME_THROTTLE_MS);
+        }
+    }
+
+    private void CheckForWindowResize() {
+        int newWidth = Console.WindowWidth;
+        int newHeight = Console.WindowHeight;
+        if (newWidth != _winWidth || newHeight != _winHeight) {
+            _winWidth = newWidth;
+            _winHeight = newHeight;
+            _dispatcher.Dispatch(_root, new ResizeEvent(_winWidth, _winHeight));
+        }
+    }
+
+    private void InitializeHandlers() {
+        List<Action<UiEvent>> keyHandlers = [];
+        keyHandlers.Add(e => HandleKeyEvent((KeyEvent)e));
+        _handlers.Add(typeof(KeyEvent), keyHandlers);
+    }
+
+    private void HandleApplicationEvent(UiEvent uiEvent) {
+        Type eventType = uiEvent.GetType();
+        if (_handlers.TryGetValue(eventType, out List<Action<UiEvent>>? handlers)) {
+            foreach (Action<UiEvent> handler in handlers) {
+                handler(uiEvent);
+                if (uiEvent.Handled) {
                     return;
                 }
             }
+        }
+    }
+    
+    private void HandleKeyEvent(KeyEvent keyEvent) {
+        bool isEscape = keyEvent.Key == ConsoleKey.Escape;
+        bool isCtrlC = keyEvent.Key == ConsoleKey.C
+            && keyEvent.Modifiers.HasFlag(ConsoleModifiers.Control);
 
-            Thread.Sleep(FRAME_THROTTLE_MS);
+        // TODO: should make shutdown configurable.
+        if (isEscape || isCtrlC) {
+            _isRunning = false;
         }
     }
 }

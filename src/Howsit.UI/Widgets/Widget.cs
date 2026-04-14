@@ -188,7 +188,6 @@ public abstract class Widget : IWidget {
         if (_handlers.TryGetValue(eventType, out List<Action<UiEvent>>? handlers)) {
             foreach (Action<UiEvent> handler in handlers) {
                 handler(uiEvent);
-
                 if (uiEvent.Handled) {
                     // Propagation stopped.
                     return;
