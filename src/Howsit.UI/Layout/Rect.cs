@@ -5,6 +5,7 @@ namespace Howsit.UI.Layout;
 /// a rectangle on the screen.
 /// </summary>
 public class Rect {
+    // TODO: make equatable.
     public int X { get; set; }
     public int Y { get; set; }
     public int Width { get; set; }

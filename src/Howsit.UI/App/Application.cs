@@ -17,6 +17,7 @@ public class Application : IApplication {
     private IRenderer _renderer;
     private IEventDispatcher _dispatcher;
     private IInputParser _inputParser;
+    private IFocusManager _focusManager;
     private int _winWidth;
     private int _winHeight;
     private bool _isRunning;
@@ -30,7 +31,8 @@ public class Application : IApplication {
         IContainer root,
         IRenderer renderer,
         IEventDispatcher dispatcher,
-        IInputParser inputParser
+        IInputParser inputParser,
+        IFocusManager focusManager
     ) {
         _winWidth = Console.WindowWidth;
         _winHeight = Console.WindowHeight;
@@ -40,6 +42,7 @@ public class Application : IApplication {
         _renderer = renderer;
         _dispatcher = dispatcher;
         _inputParser = inputParser;
+        _focusManager = focusManager;
 
         _isRunning = false;
 
@@ -72,21 +75,24 @@ public class Application : IApplication {
         Console.Out.Write(Ansi.EnterAlternateScreen);
         Console.Out.Write(Ansi.ShowCursor);
 
+        string? exitMessage = null;
         try {
             MainLoop();
         } catch (Exception e) {
-            Console.Out.Write(e.Message);
+            exitMessage = e.Message;
         } finally {
             Console.TreatControlCAsInput = previousTreatControlCAsInput;
             Console.Out.Write(Ansi.ExitAlternateScreen);
             Console.Out.Flush();
+            if (exitMessage is not null) {
+                Console.Out.Write(exitMessage);
+            }
         }
     }
 
     private void MainLoop() {
         while (_isRunning) {
             CheckForWindowResize();
-
             IEnumerable<UiEvent> inputEvents = _inputParser.ReadAvailable();
             foreach (UiEvent inputEvent in inputEvents) {
                 HandleApplicationEvent(inputEvent);
@@ -94,8 +100,7 @@ public class Application : IApplication {
                     continue;
                 }
 
-                // TODO: use focus manager to dispatch to focused widget
-                _dispatcher.Dispatch(_root, inputEvent);
+                _dispatcher.Dispatch(_focusManager.GetFocusedWidget(), inputEvent);
             }
 
             if (!_isRunning) {

@@ -94,6 +94,19 @@ public interface IWidget {
     public bool IsDirty { get; set; }
 
     /// <summary>
+    /// Returns true if the widget has the focus for input and other events.
+    /// </summary>
+    public bool HasFocus { get; }
+
+    /// <summary>
+    /// Indicates whether the widget accepts focus for input events.
+    /// </summary>
+    /// <remarks>
+    /// If this is true, the widget must abide by that when SetFocus() is called.
+    /// </remarks>
+    public bool AcceptsFocus { get; }
+
+    /// <summary>
     /// Get the widgets unique ID.
     /// </summary>
     /// <returns></returns>
@@ -189,6 +202,17 @@ public interface IWidget {
     /// </summary>
     /// <returns></returns>
     public Cell[] Paint();
+
+    /// <summary>
+    /// Give the keyboard focus to this widget. Returns true if the widget accepts focus.
+    /// </summary>
+    public bool SetFocus();
+
+    /// <summary>
+    /// Removes the keyboard focus from this widget. Returns true if the widget allows focus
+    /// to be cleared.
+    /// </summary>
+    public bool ClearFocus();
 
     /// <summary>
     /// Register an event handler for a specific event type. Multiple handlers can be registered

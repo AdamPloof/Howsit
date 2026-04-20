@@ -11,6 +11,8 @@ namespace Howsit.UI.Widgets;
 /// Their layout style/orientation is determined by the ILayout type provided.
 /// </summary>
 public class Container : Widget, IContainer {
+    public override bool AcceptsFocus { get; protected set; } = false;
+
     private ILayout _layout;
 
     public Container(IWidget? parent, ILayout layout) : base(parent) {
@@ -87,5 +89,22 @@ public class Container : Widget, IContainer {
 
         LayoutIsDirty = true;
         IsDirty = true;
+    }
+
+    /// <summary>
+    /// Containers are not eligible for focus.
+    /// </summary>
+    /// <returns></returns>
+    public override bool SetFocus() {
+        return false;
+    }
+
+    /// <summary>
+    /// Since containers cannot be focused on to begin with, they always respond to clear focus
+    /// requests with true.
+    /// </summary>
+    /// <returns></returns>
+    public override bool ClearFocus() {
+        return true;
     }
 }

@@ -10,6 +10,8 @@ namespace Howsit.UI.Widgets;
 /// Basic Label widget for displaying static text
 /// </summary>
 public class Label : Widget {
+    public override bool AcceptsFocus { get; protected set; } = false;
+
     private string _content;
     private CellStyle _style;
     private Cell[] _cachedBuffer;
@@ -70,6 +72,7 @@ public class Label : Widget {
             col++;
         }
 
+        _cachedBuffer = buffer;
         IsDirty = false;
 
         return buffer;
@@ -116,5 +119,22 @@ public class Label : Widget {
         if (newSize.Width > SizeHint.Width || newSize.Height > SizeHint.Height) {
             SizeHint = newSize;
         }
+    }
+
+    /// <summary>
+    /// Labels are not eligible for focus.
+    /// </summary>
+    /// <returns></returns>
+    public override bool SetFocus() {
+        return false;
+    }
+
+    /// <summary>
+    /// Since labels cannot be focused on to begin with, they always respond to clear focus
+    /// requests with true.
+    /// </summary>
+    /// <returns></returns>
+    public override bool ClearFocus() {
+        return true;
     }
 }

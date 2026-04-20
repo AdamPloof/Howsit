@@ -147,7 +147,8 @@ public class Renderer : IRenderer {
         for (int row = 0; row < height; row++) {
             // Split the row into spans of consecutive styled cells.
             List<CellSpan> lineSpans = [];
-            ReadOnlySpan<Cell> line = buffer.Slice(bufferOffset, bufferOffset + width - 1);
+            // FIXME: this is throwing out of range errors, is the length calc incorrect?
+            ReadOnlySpan<Cell> line = buffer.Slice(bufferOffset, width);
             CellStyle? prevStyle = line[0].Style;
 
             int currentSpanIdx = 0;

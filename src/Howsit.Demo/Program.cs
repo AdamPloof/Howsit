@@ -5,6 +5,7 @@ using Howsit.UI.Drawing;
 using Howsit.UI.Style;
 using Howsit.UI.Events;
 using Howsit.UI.App;
+using Howsit.UI.Input;
 
 VBoxLayout layout = new();
 Container root = new Container(null, layout) {
@@ -22,7 +23,19 @@ Label label = new Label(
     Border = new Border(BorderStyle.Solid)
 };
 
+Label label2 = new Label(
+    root,
+    "Okapp,appokwhat?",
+    new CellStyle(TextFormat.Normal, new Color(0, 255, 45))
+) {
+    StretchHorizontal = 1,
+    StretchVertical = 1,
+    Border = new Border(BorderStyle.Solid)
+};
+
 Renderer renderer = new();
 EventDispatcher dispatcher = new();
-Application app = new Application(root, renderer, dispatcher);
+InputParser inputParser = new();
+FocusManager focusManager = new(root);
+Application app = new Application(root, renderer, dispatcher, inputParser, focusManager);
 app.Run();

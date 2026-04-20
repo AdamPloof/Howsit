@@ -42,6 +42,12 @@ public abstract class Widget : IWidget {
     /// <inheritdoc />
     public bool IsDirty { get; set; }
 
+    /// <inheritdoc />
+    public bool HasFocus { get; protected set; }
+
+    /// <inheritdoc />
+    public abstract bool AcceptsFocus { get; protected set; }
+
     /// <summary>
     /// Unique identifier for this Widget
     /// </summary>
@@ -101,7 +107,12 @@ public abstract class Widget : IWidget {
 
     /// <inheritdoc />
     public void SetBounds(Rect rect) {
+        if (rect == BoundingBox) {
+            return;
+        }
+
         BoundingBox = rect;
+        IsDirty = true;
     }
 
     /// <inheritdoc />
@@ -171,6 +182,12 @@ public abstract class Widget : IWidget {
 
     /// <inheritdoc />
     public abstract Cell[] Paint();
+
+    /// <inheritdoc />
+    public abstract bool SetFocus();
+
+    /// <inheritdoc />
+    public abstract bool ClearFocus();
 
     /// <inheritdoc />
     public void AddHandler<TEvent>(Action<TEvent> handler) where TEvent : UiEvent {
