@@ -20,4 +20,21 @@ public interface IFocusManager {
     /// </summary>
     /// <param name="widget"></param>
     public bool ChangeFocus(IWidget widget);
+
+    /// <summary>
+    /// Indicates that the currently focused widget should handle tab key instead
+    /// of being used to change focus.
+    /// </summary>
+    /// <returns></returns>
+    public bool FocusedWidgetCapturesTab();
+
+    /// <summary>
+    /// Focus on the next widget in the tree.
+    /// </summary>
+    public void FocusNext();
+
+    /// <summary>
+    /// Focus on the previous widget in the tree.
+    /// </summary>
+    public void FocusPrevious();
 }

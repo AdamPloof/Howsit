@@ -1,11 +1,13 @@
+using System;
+using System.Collections.Generic;
+
 namespace Howsit.UI.Layout;
 
 /// <summary>
 /// The coordinates of the top left corner and width/height for
 /// a rectangle on the screen.
 /// </summary>
-public class Rect {
-    // TODO: make equatable.
+public class Rect : IEquatable<Rect> {
     public int X { get; set; }
     public int Y { get; set; }
     public int Width { get; set; }
@@ -50,5 +52,29 @@ public class Rect {
         }
 
         return false;
+    }
+
+    public bool Equals(Rect? other) {
+        return other is not null
+            && X == other.X
+            && Y == other.Y
+            && Width == other.Width
+            && Height == other.Height;
+    }
+
+    public override bool Equals(object? obj) {
+        return Equals(obj as Rect);
+    }
+
+    public override int GetHashCode() {
+        return HashCode.Combine(X, Y, Width, Height);
+    }
+
+    public static bool operator ==(Rect? left, Rect? right) {
+        return EqualityComparer<Rect>.Default.Equals(left, right);
+    }
+
+    public static bool operator !=(Rect? left, Rect? right) {
+        return !(left == right);
     }
 }

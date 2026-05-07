@@ -147,12 +147,27 @@ public class Application : IApplication {
     }
     
     private void HandleKeyEvent(KeyEvent keyEvent) {
-        bool isEscape = keyEvent.Key == ConsoleKey.Escape;
+        if (keyEvent.Key == ConsoleKey.Escape) {
+            _focusManager.ChangeFocus(_root);
+        }
+
+        if (keyEvent.Key == ConsoleKey.Tab) {
+            if (_focusManager.FocusedWidgetCapturesTab()) {
+                return;
+            }
+
+            if (keyEvent.Modifiers.HasFlag(ConsoleModifiers.Shift)) {
+                _focusManager.FocusPrevious();
+            } else {            
+                _focusManager.FocusNext();
+            }
+        }
+
         bool isCtrlC = keyEvent.Key == ConsoleKey.C
             && keyEvent.Modifiers.HasFlag(ConsoleModifiers.Control);
 
         // TODO: should make shutdown configurable.
-        if (isEscape || isCtrlC) {
+        if (isCtrlC) {
             _isRunning = false;
         }
     }

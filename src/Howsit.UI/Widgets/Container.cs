@@ -19,6 +19,11 @@ public class Container : Widget, IContainer {
         LayoutIsDirty = true;
         _layout = layout;
 
+        if (parent is null) {
+            // Accept focus if container is the root widget
+            AcceptsFocus = true;
+        }
+
         AddHandler<ResizeEvent>(HandleResize);
     }
 
@@ -92,19 +97,32 @@ public class Container : Widget, IContainer {
     }
 
     /// <summary>
-    /// Containers are not eligible for focus.
+    /// Generally containers are not eligible for focus. The exception is
+    /// the root widget.
     /// </summary>
     /// <returns></returns>
     public override bool SetFocus() {
+        if (Parent is null) {
+            HasFocus = true;
+
+            return true;
+        }
+
         return false;
     }
 
     /// <summary>
-    /// Since containers cannot be focused on to begin with, they always respond to clear focus
-    /// requests with true.
+    /// Containers always accept clear focus requests.
     /// </summary>
     /// <returns></returns>
     public override bool ClearFocus() {
+        HasFocus = false;
+
         return true;
+    }
+
+    /// <inheritdoc />
+    public override bool CaptureTabKey() {
+        return false;
     }
 }

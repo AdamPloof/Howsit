@@ -215,6 +215,13 @@ public interface IWidget {
     public bool ClearFocus();
 
     /// <summary>
+    /// Indicates that the widget should capture tab key events and prevent tab from
+    /// changing the focused widget.
+    /// </summary>
+    /// <returns></returns>
+    public bool CaptureTabKey();
+
+    /// <summary>
     /// Register an event handler for a specific event type. Multiple handlers can be registered
     /// for the same event.
     /// </summary>

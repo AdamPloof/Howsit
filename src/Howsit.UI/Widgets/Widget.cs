@@ -190,6 +190,9 @@ public abstract class Widget : IWidget {
     public abstract bool ClearFocus();
 
     /// <inheritdoc />
+    public abstract bool CaptureTabKey();
+
+    /// <inheritdoc />
     public void AddHandler<TEvent>(Action<TEvent> handler) where TEvent : UiEvent {
         Type eventType = typeof(TEvent);
         if (!_handlers.TryGetValue(eventType, out List<Action<UiEvent>>? handlers)) {

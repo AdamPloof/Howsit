@@ -137,4 +137,9 @@ public class Label : Widget {
     public override bool ClearFocus() {
         return true;
     }
+
+    /// <inheritdoc />
+    public override bool CaptureTabKey() {
+        return false;
+    }
 }
