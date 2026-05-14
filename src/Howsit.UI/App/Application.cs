@@ -148,7 +148,9 @@ public class Application : IApplication {
     
     private void HandleKeyEvent(KeyEvent keyEvent) {
         if (keyEvent.Key == ConsoleKey.Escape) {
+            // TODO: some widgets might want to capture the escape key.
             _focusManager.ChangeFocus(_root);
+            keyEvent.MarkHandled();
         }
 
         if (keyEvent.Key == ConsoleKey.Tab) {
@@ -158,8 +160,10 @@ public class Application : IApplication {
 
             if (keyEvent.Modifiers.HasFlag(ConsoleModifiers.Shift)) {
                 _focusManager.FocusPrevious();
-            } else {            
+                keyEvent.MarkHandled();
+            } else {
                 _focusManager.FocusNext();
+                keyEvent.MarkHandled();
             }
         }
 
@@ -169,6 +173,7 @@ public class Application : IApplication {
         // TODO: should make shutdown configurable.
         if (isCtrlC) {
             _isRunning = false;
+            keyEvent.MarkHandled();
         }
     }
 }
