@@ -51,14 +51,14 @@ public class Timer : ITimer {
     }
 
     /// <inheritdoc />
-    public bool IsRunning() {
-        return _isRunning;
+    public void Reset() {
+        _startTime = DateTimeOffset.UtcNow;
+        _stopTime = null;
     }
 
     /// <inheritdoc />
-    public bool Execute() {
-
-        return true;
+    public bool IsRunning() {
+        return _isRunning;
     }
 
     /// <inheritdoc />
@@ -76,6 +76,6 @@ public class Timer : ITimer {
             elapsed = now - (DateTimeOffset)_startTime;
         }
 
-        return elapsed.Milliseconds >= Timeout.Milliseconds;
+        return elapsed >= Timeout;
     }
 }

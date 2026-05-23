@@ -1,40 +1,28 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Threading;
-
-using Howsit.UI;
-using Howsit.UI.App;
 
 namespace Howsit.Demo;
 
 /// <summary>
 /// Main class for managing the lifecycle of Howsit.
 /// </summary>
-public class App {
+public class Animation {
     private const string LineSeparator = ";;";
-    private const int FrameRateMs = 1000;
 
-    public App() {
-        
+    private List<string> _frames;
+    int _frameIdx;
+
+    public Animation() {
+        _frames = GetFrames();
+        _frameIdx = 0;
     }
 
-    public void Run() {
-        int frameIdx = 0;
-        List<string> frames = GetFrames();
-        DateTime nextFrameAt = DateTime.UtcNow;
+    public string GetNextFrame() {
+        string frame = _frames[_frameIdx];
+        _frameIdx = _frameIdx == (_frames.Count - 1) ? 0 : _frameIdx + 1;
 
-        while (true) {
-            DateTime now = DateTime.UtcNow;
-            if (now >= nextFrameAt) {
-                string frame = frames[frameIdx];
-
-                frameIdx = frameIdx == (frames.Count - 1) ? 0 : frameIdx + 1;
-                nextFrameAt = now.AddMilliseconds(FrameRateMs);
-            }
-
-            Thread.Sleep(25);
-        }
+        return frame;
     }
 
     private List<string> GetFrames() {

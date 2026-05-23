@@ -7,23 +7,17 @@ using Howsit.UI.Style;
 namespace Howsit.UI.Widgets;
 
 /// <summary>
-/// A standard text box for displaying text. 
+/// A basic widget for displaying static content. 
 /// </summary>
-public class TextBox : Widget {
-    /// <summary>
-    /// Indicates whether the text box should accept input events to modify
-    /// its content.
-    /// </summary>
-    public bool ReadOnly { get; set; } = false;
-
+public class Canvas : Widget {
     /// <inheritdoc />
-    public override bool AcceptsFocus { get; protected set; } = true;
+    public override bool AcceptsFocus { get; protected set; } = false;
 
     private string? _content;
     private CellStyle _style;
     private Cell[] _cachedBuffer;
 
-    public TextBox(IWidget? parent, string? content, CellStyle? style) : base(parent) {
+    public Canvas(IWidget? parent, string? content, CellStyle? style) : base(parent) {
         _content = content;
         _style = style ?? new CellStyle();
         _cachedBuffer = [];
@@ -40,6 +34,7 @@ public class TextBox : Widget {
     /// <param name="content"></param>
     public void SetContent(string? content) {
         _content = content;
+        IsDirty = true;
     }
 
     public void SetStyle(CellStyle style) {
@@ -88,16 +83,15 @@ public class TextBox : Widget {
     }
 
     /// <summary>
-    /// Accepts focus when ReadOnly is false.
+    /// Does not accept focus.
     /// </summary>
     /// <returns></returns>
     public override bool SetFocus() {
-
         return false;
     }
 
     /// <summary>
-    /// Since labels cannot be focused on to begin with, they always respond to clear focus
+    /// A Canvas cannot be focused on to begin with, they always respond to clear focus
     /// requests with true.
     /// </summary>
     /// <returns></returns>

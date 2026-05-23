@@ -28,6 +28,11 @@ public interface ITimer {
     public void Stop();
 
     /// <summary>
+    /// Reset the start time of the timer. If Repeat is false, this does nothing.
+    /// </summary>
+    public void Reset();
+
+    /// <summary>
     /// Indicates whether this timer is still alive. Once a timer has expired and its
     /// callback executed it becomes inactive unless it is set to repeat.
     /// </summary>
@@ -39,12 +44,4 @@ public interface ITimer {
     /// </summary>
     /// <returns></returns>
     public bool IsExpired();
-
-    /// <summary>
-    /// Execute the Timer's callback. Returns true if the timer should repeat.
-    /// </summary>
-    /// <remarks>
-    /// Throws an InvalidOperationException if the timer's timeout has not expired.
-    /// </remarks>
-    public bool Execute();
 }

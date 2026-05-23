@@ -5,21 +5,26 @@ namespace Howsit.UI.App;
 
 /// <inheritdoc />
 public class Scheduler : IScheduler {
-    private IList<ITimer> _timers;
+    private Dictionary<ITimer, List<Action<ITimer>>> _timers;
 
     public Scheduler() {
         _timers = [];
     }
 
     /// <inheritdoc />
-    public void Register(ITimer timer) {
-        _timers.Add(timer);
+    public void Register(ITimer timer, Action<ITimer> action) {
+        if (!_timers.TryGetValue(timer, out List<Action<ITimer>>? actions)) {
+            actions = [];
+            _timers[timer] = actions;
+        }
+
+        _timers[timer].Add(action);
     }
 
     /// <inheritdoc />
     public void StartTimers() {
-        foreach (ITimer timer in _timers) {
-            if (timer.IsRunning()) {
+        foreach (ITimer timer in _timers.Keys) {
+            if (!timer.IsRunning()) {
                 timer.Start();
             }
         }
@@ -27,9 +32,22 @@ public class Scheduler : IScheduler {
 
     /// <inheritdoc />
     public void ExecuteReadyTimers() {
-        foreach (ITimer timer in _timers) {
+        foreach (ITimer timer in _timers.Keys) {
             if (timer.IsRunning() && timer.IsExpired()) {
-                timer.Execute();
+                foreach (Action<ITimer> action in _timers[timer]) {
+                    action(timer);
+                    if (!timer.IsRunning()) {
+                        // Timer cancelled by previous action.
+                        break;
+                    }
+                }
+
+                if (timer.IsRunning() && timer.Repeat) {
+                    // Start the next cycle of the timer from the end of the previous execution.
+                    // This might not be the best way to handle this since it would increase
+                    // drift over time if callback exectuion takes a while.
+                    timer.Reset();
+                }
             }
         }
     }

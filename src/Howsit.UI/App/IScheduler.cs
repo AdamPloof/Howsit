@@ -10,7 +10,7 @@ public interface IScheduler {
     /// Add a timer for the scheduler to manage.
     /// </summary>
     /// <param name="timer"></param>
-    public void Register(ITimer timer);
+    public void Register(ITimer timer, Action<ITimer> action);
 
     /// <summary>
     /// Start all registered timers.

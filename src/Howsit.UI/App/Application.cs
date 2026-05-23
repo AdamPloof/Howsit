@@ -18,6 +18,7 @@ public class Application : IApplication {
     private IEventDispatcher _dispatcher;
     private IInputParser _inputParser;
     private IFocusManager _focusManager;
+    private IScheduler _scheduler;
     private int _winWidth;
     private int _winHeight;
     private bool _isRunning;
@@ -32,7 +33,8 @@ public class Application : IApplication {
         IRenderer renderer,
         IEventDispatcher dispatcher,
         IInputParser inputParser,
-        IFocusManager focusManager
+        IFocusManager focusManager,
+        IScheduler scheduler
     ) {
         _winWidth = Console.WindowWidth;
         _winHeight = Console.WindowHeight;
@@ -43,6 +45,7 @@ public class Application : IApplication {
         _dispatcher = dispatcher;
         _inputParser = inputParser;
         _focusManager = focusManager;
+        _scheduler = scheduler;
 
         _isRunning = false;
 
@@ -60,10 +63,17 @@ public class Application : IApplication {
         }
 
         foreach (IWidget child in widget.GetChildren()) {
-            return NeedsDraw(child);
+            if (NeedsDraw(child)) {
+                return true;
+            }
         }
 
         return false;
+    }
+
+    /// <inheritdoc />
+    public void Connect(ITimer timer, Action<ITimer> action) {
+        _scheduler.Register(timer, action);
     }
 
     /// <inheritdoc />
@@ -77,6 +87,7 @@ public class Application : IApplication {
 
         string? exitMessage = null;
         try {
+            _scheduler.StartTimers();
             MainLoop();
         } catch (Exception e) {
             exitMessage = e.Message;
@@ -93,6 +104,8 @@ public class Application : IApplication {
     private void MainLoop() {
         while (_isRunning) {
             CheckForWindowResize();
+            _scheduler.ExecuteReadyTimers();
+
             IEnumerable<UiEvent> inputEvents = _inputParser.ReadAvailable();
             foreach (UiEvent inputEvent in inputEvents) {
                 HandleApplicationEvent(inputEvent);
