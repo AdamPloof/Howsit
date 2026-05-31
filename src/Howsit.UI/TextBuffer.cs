@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Howsit.UI.Style;
 
 namespace Howsit.UI;
@@ -71,5 +73,25 @@ public static class TextBuffer {
         }
 
         return buffer;
+    }
+
+    public static Cell[] FromLines(
+        IEnumerable<string> lines,
+        int width,
+        int height
+    ) {
+        return FromLines(lines, width, height, new CellStyle());
+    }
+
+    public static Cell[] FromLines(
+        IEnumerable<string> lines,
+        int width,
+        int height,
+        CellStyle style
+    ) {
+        // TODO: it would probably be more efficient to create the buffer from the
+        // lines directly rather than converting back to a string.
+
+        return FromString(String.Join('\n', lines), width, height, style);
     }
 }

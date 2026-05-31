@@ -9,6 +9,7 @@ namespace Howsit.UI.Widgets;
 /// <summary>
 /// A basic widget for displaying static content. 
 /// </summary>
+/// <todo>Could this just be replaced by a ReadOnly Textbox?</todo>
 public class Canvas : Widget {
     /// <inheritdoc />
     public override bool AcceptsFocus { get; protected set; } = false;
@@ -26,11 +27,6 @@ public class Canvas : Widget {
     /// <summary>
     /// Set the text content.
     /// </summary>
-    /// <remarks>
-    /// Even if the text box is ReadOnly, it is still possible to set the content
-    /// via this method. ReadOnly prevents text content from being edited via
-    /// input events.
-    /// </remarks>
     /// <param name="content"></param>
     public void SetContent(string? content) {
         _content = content;
