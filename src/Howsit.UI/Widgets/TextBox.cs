@@ -25,8 +25,6 @@ public class TextBox : Widget {
     /// </summary>
     public bool ReadOnly { get; set; } = false;
 
-    public Cursor Cursor { get; init; } = new Cursor();
-
     private List<string> _lines;
     private CellStyle _style;
     private Cell[] _buffer;
@@ -37,7 +35,9 @@ public class TextBox : Widget {
         _buffer = [];
 
         _lines = NormalizeContent(content ?? "").Split('\n').ToList();
-        Cursor.Position = new Point(0, 0);
+
+        // TODO: should move cursor position management to a separate class
+        _cursor.Position = new Point(0, 0);
 
         AddHandler<TextInputEvent>(HandleTextInput);
         AddHandler<KeyEvent>(HandleKeyInput);
@@ -84,11 +84,11 @@ public class TextBox : Widget {
     }
 
     public bool CursorPositionIsValid() {
-        if (Cursor.Position.Y < 0 || Cursor.Position.Y > _lines.Count - 1) {
+        if (_cursor.Position.Y < 0 || _cursor.Position.Y > _lines.Count - 1) {
             return false;
         }
 
-        if (Cursor.Position.X > 0 || Cursor.Position.X > _lines[Cursor.Position.Y].Length) {
+        if (_cursor.Position.X > 0 || _cursor.Position.X > _lines[_cursor.Position.Y].Length) {
             return false;
         }
 
@@ -228,26 +228,26 @@ public class TextBox : Widget {
     public void InsertText(string text) {
         if (!CursorPositionIsValid()) {
             throw new InvalidOperationException(
-                $"Cursor position is invalid: ({Cursor.Position.X}, {Cursor.Position.Y})"
+                $"Cursor position is invalid: ({_cursor.Position.X}, {_cursor.Position.Y})"
             );
         }
 
         // TODO: Handle Insert mode
         if (IsEmpty()) {
             SetContent(text);
-        } else if (Cursor.Position.X == 0) {
+        } else if (_cursor.Position.X == 0) {
             // Cursor is at beginning of line
-            string newLine = text + _lines[Cursor.Position.Y];
-            _lines[Cursor.Position.Y] = newLine;
-        } else if (Cursor.Position.X == _lines[Cursor.Position.Y].Length) {
+            string newLine = text + _lines[_cursor.Position.Y];
+            _lines[_cursor.Position.Y] = newLine;
+        } else if (_cursor.Position.X == _lines[_cursor.Position.Y].Length) {
             // Cursor is at end of line
-            string newLine = _lines[Cursor.Position.Y] + text;
-            _lines[Cursor.Position.Y] = newLine;
+            string newLine = _lines[_cursor.Position.Y] + text;
+            _lines[_cursor.Position.Y] = newLine;
         } else {
             // Cursor is in middle of line
-            string oldLine = _lines[Cursor.Position.Y];
-            string newLine = oldLine[..Cursor.Position.X] + text + oldLine[Cursor.Position.X..];
-            _lines[Cursor.Position.Y] = newLine;
+            string oldLine = _lines[_cursor.Position.Y];
+            string newLine = oldLine[.._cursor.Position.X] + text + oldLine[_cursor.Position.X..];
+            _lines[_cursor.Position.Y] = newLine;
         }
     }
 
@@ -259,7 +259,7 @@ public class TextBox : Widget {
     public void DeleteText(int length) {
         if (!CursorPositionIsValid()) {
             throw new InvalidOperationException(
-                $"Cursor position is invalid: ({Cursor.Position.X}, {Cursor.Position.Y})"
+                $"Cursor position is invalid: ({_cursor.Position.X}, {_cursor.Position.Y})"
             );
         }
 
@@ -268,23 +268,23 @@ public class TextBox : Widget {
         }
 
         if (length > 0) {
-            if (Cursor.Position.X >= _lines[Cursor.Position.Y].Length) {
+            if (_cursor.Position.X >= _lines[_cursor.Position.Y].Length) {
                 return;
             }
 
             // Delete
-            string oldLine = _lines[Cursor.Position.Y];
-            string newLine = oldLine[..Cursor.Position.X] + oldLine[(Cursor.Position.X + length)..];
-            _lines[Cursor.Position.Y] = newLine;
+            string oldLine = _lines[_cursor.Position.Y];
+            string newLine = oldLine[.._cursor.Position.X] + oldLine[(_cursor.Position.X + length)..];
+            _lines[_cursor.Position.Y] = newLine;
         } else {
             // Backspace
-            if (Cursor.Position.X == 0) {
+            if (_cursor.Position.X == 0) {
                 return;
             }
 
-            string oldLine = _lines[Cursor.Position.Y];
-            string newLine = oldLine[..(Cursor.Position.X - length)] + oldLine[Cursor.Position.X..];
-            _lines[Cursor.Position.Y] = newLine;
+            string oldLine = _lines[_cursor.Position.Y];
+            string newLine = oldLine[..(_cursor.Position.X - length)] + oldLine[_cursor.Position.X..];
+            _lines[_cursor.Position.Y] = newLine;
         }
     }
 
@@ -293,23 +293,23 @@ public class TextBox : Widget {
             return;
         }
 
-        if (Cursor.Position.X == _lines[Cursor.Position.Y].Length) {
-            if (Cursor.Position.Y == _lines.Count - 1) {
+        if (_cursor.Position.X == _lines[_cursor.Position.Y].Length) {
+            if (_cursor.Position.Y == _lines.Count - 1) {
                 // Already at end of content
                 return;
             }
 
             // Move to first char on next line
-            Cursor.Position = new Point() {
+            UpdateCursor(new Point() {
                 X = 0,
-                Y = Cursor.Position.Y + 1
-            };
+                Y = _cursor.Position.Y + 1
+            });
         } else {
             // Move to next char on current line
-            Cursor.Position = new Point() {
-                X = Cursor.Position.X + 1,
-                Y = Cursor.Position.Y
-            };
+            UpdateCursor(new Point() {
+                X = _cursor.Position.X + 1,
+                Y = _cursor.Position.Y
+            });
         }
     }
 
@@ -318,23 +318,23 @@ public class TextBox : Widget {
             return;
         }
 
-        if (Cursor.Position.X == 0) {
-            if (Cursor.Position.Y == 0) {
+        if (_cursor.Position.X == 0) {
+            if (_cursor.Position.Y == 0) {
                 // Already at beginning of content
                 return;
             }
 
             // Move to last char on previous line
-            Cursor.Position = new Point() {
-                X = _lines[Cursor.Position.Y - 1].Length,
-                Y = Cursor.Position.Y - 1
-            };
+            UpdateCursor(new Point() {
+                X = _lines[_cursor.Position.Y - 1].Length,
+                Y = _cursor.Position.Y - 1
+            });
         } else {
             // Move to previous char on current line
-            Cursor.Position = new Point() {
-                X = Cursor.Position.X - 1,
-                Y = Cursor.Position.Y
-            };
+            UpdateCursor(new Point() {
+                X = _cursor.Position.X - 1,
+                Y = _cursor.Position.Y
+            });
         }
     }
 
@@ -349,10 +349,10 @@ public class TextBox : Widget {
     }
 
     public void MoveCursorToLineStart() {
-        Cursor.Position = new Point() {
+        UpdateCursor(new Point() {
             X = 0,
-            Y = Cursor.Position.Y
-        };
+            Y = _cursor.Position.Y
+        });
     }
 
     public void MoveCursorToLineEnd() {
@@ -360,10 +360,10 @@ public class TextBox : Widget {
             return;
         }
 
-        Cursor.Position = new Point() {
-            X = _lines[Cursor.Position.Y].Length,
-            Y = Cursor.Position.Y
-        };
+        UpdateCursor(new Point() {
+            X = _lines[_cursor.Position.Y].Length,
+            Y = _cursor.Position.Y
+        });
     }
 
     public void MoveCursorToContentEnd() {
@@ -371,18 +371,18 @@ public class TextBox : Widget {
             return;
         }
 
-        Cursor.Position = new Point() {
+        UpdateCursor(new Point() {
             X = _lines[^1].Length,
             Y = _lines.Count - 1
-        };
+        });
     }
 
     /// <summary>
     /// Updates the cursor postion, style, and visibility. Emits a CursorChanged Event.
     /// </summary>
     /// <param name="cursor"></param>
-    public void UpdateCursor(Cursor cursor) {
-        Cursor.Position = cursor.Position;
+    public void UpdateCursor(Point position) {
+        _cursor.Position = position;
     }
 
     /// <summary>

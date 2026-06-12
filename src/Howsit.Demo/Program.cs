@@ -53,7 +53,6 @@ public class UI {
 
         _canvas = new Canvas(
             root,
-            // _animation.GetNextFrame(),
             _animation.GetNextFrame(),
             new CellStyle(TextFormat.Normal, new Color(0, 255, 45))
         ) {
@@ -66,6 +65,7 @@ public class UI {
         EventDispatcher dispatcher = new();
         InputParser inputParser = new();
         FocusManager focusManager = new(root);
+        CursorManager cursorManager = new();
         Scheduler scheduler = new();
         Application app = new Application(
             root,
@@ -73,6 +73,7 @@ public class UI {
             dispatcher,
             inputParser,
             focusManager,
+            cursorManager,
             scheduler
         );
 

@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 using Howsit.UI.Widgets;
+using Howsit.UI.Events;
 
 namespace Howsit.UI.App;
 
@@ -9,6 +11,7 @@ namespace Howsit.UI.App;
 public class FocusManager : IFocusManager {
     private IWidget _root;
     private IWidget _focused;
+    private List<Action<FocusChangedEvent>> _listeners;
 
     public FocusManager(IWidget root) {
         if (root.Parent is not null) {
@@ -21,6 +24,7 @@ public class FocusManager : IFocusManager {
 
         _root = root;
         _focused = root;
+        _listeners = [];
     }
 
     /// <inheritdoc />
@@ -43,7 +47,15 @@ public class FocusManager : IFocusManager {
             return false;
         }
 
+        IWidget prevFocus = _focused;
         _focused = widget;
+
+        if (_listeners.Count > 0) {
+            FocusChangedEvent focusChanged = new FocusChangedEvent(prevFocus, _focused);
+            foreach (Action<FocusChangedEvent> action in _listeners) {
+                action(focusChanged);
+            }
+        }
 
         return true;
     }
@@ -67,6 +79,10 @@ public class FocusManager : IFocusManager {
                 return;
             }
         }
+    }
+
+    public void RegisterListener(Action<FocusChangedEvent> action) {
+        _listeners.Add(action);
     }
 
     /// <inheritdoc />

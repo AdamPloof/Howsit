@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+
+using Howsit.UI;
 using Howsit.UI.Style;
 
 namespace Howsit.UI;
@@ -10,10 +12,10 @@ public static class Ansi {
     public const string Reset = ESC + "[0m";
 
     public const string EnterAlternateScreen = "\u001b[?1049h";
-    public const string ExitAlternateScreen = "\u001b[?1049l";
-    public const string ClearScreenAndHome = "\u001b[2J\u001b[H";
-    public const string ClearToEndOfLine = "\u001b[K";
-    public const string ShowCursor = "\u001b[?25h";
+    public const string ExitAlternateScreen =  "\u001b[?1049l";
+    public const string ClearScreenAndHome =   "\u001b[2J\u001b[H";
+    public const string ClearToEndOfLine =     "\u001b[K";
+    public const string ShowCursor =           "\u001b[?25h";
 
     // SGR control codes
     public const int Bold          = 1;
@@ -24,7 +26,16 @@ public static class Ansi {
     public const int RapidBlink    = 6;
     public const int Strikethrough = 9;
 
-    public static Dictionary<TextFormat, int> FormatControlMap = new Dictionary<TextFormat, int>() {
+    // Cursor Styles
+    public const string BlinkingBlock =     "\x1b[0 q";
+    public const string Default =           "\x1b[1 q";
+    public const string SteadyBlock =       "\x1b[2 q";
+    public const string BlinkingUnderline = "\x1b[3 q";
+    public const string SteadyUnderline =   "\x1b[4 q";
+    public const string BlinkingBar =       "\x1b[5 q";
+    public const string SteadyBar =         "\x1b[6 q";
+
+    public static Dictionary<TextFormat, int> FormatControlMap = new() {
         {TextFormat.Bold, Bold},
         {TextFormat.Muted, Muted},
         {TextFormat.Italic, Italic},
@@ -32,6 +43,16 @@ public static class Ansi {
         {TextFormat.SlowBlink, SlowBlink},
         {TextFormat.RapidBlink, RapidBlink},
         {TextFormat.Strikethrough, Strikethrough},
+    };
+
+    public static Dictionary<CursorStyle, string> CursorStyleMap = new() {
+        {CursorStyle.BlinkingBlock, BlinkingBlock},
+        {CursorStyle.Default, Default},
+        {CursorStyle.SteadyBlock, SteadyBlock},
+        {CursorStyle.BlinkingUnderline, BlinkingUnderline},
+        {CursorStyle.SteadyUnderline, SteadyUnderline},
+        {CursorStyle.BlinkingBar, BlinkingBar},
+        {CursorStyle.SteadyBar, SteadyBar}
     };
 
     public static List<int> TextFormatToControlCodes(TextFormat format) {

@@ -222,6 +222,13 @@ public interface IWidget {
     public bool CaptureTabKey();
 
     /// <summary>
+    /// Get the cursor within the widget. Every widget can maintain its own
+    /// cursor, but only one widget owns the screen's cursor at any given time.
+    /// </summary>
+    /// <returns></returns>
+    public Cursor GetCursor();
+
+    /// <summary>
     /// Register an event handler for a specific event type. Multiple handlers can be registered
     /// for the same event.
     /// </summary>

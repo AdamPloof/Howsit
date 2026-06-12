@@ -18,6 +18,7 @@ public class Application : IApplication {
     private IEventDispatcher _dispatcher;
     private IInputParser _inputParser;
     private IFocusManager _focusManager;
+    private ICursorManager _cursorManager;
     private IScheduler _scheduler;
     private int _winWidth;
     private int _winHeight;
@@ -34,6 +35,7 @@ public class Application : IApplication {
         IEventDispatcher dispatcher,
         IInputParser inputParser,
         IFocusManager focusManager,
+        ICursorManager cursorManager,
         IScheduler scheduler
     ) {
         _winWidth = Console.WindowWidth;
@@ -45,6 +47,7 @@ public class Application : IApplication {
         _dispatcher = dispatcher;
         _inputParser = inputParser;
         _focusManager = focusManager;
+        _cursorManager = cursorManager;
         _scheduler = scheduler;
 
         _isRunning = false;
@@ -127,6 +130,8 @@ public class Application : IApplication {
                 _renderer.Render(buffer, _winWidth, _winHeight);
             }
 
+            _cursorManager.PlaceCursor();
+
             Thread.Sleep(FRAME_THROTTLE_MS);
         }
     }
@@ -137,7 +142,12 @@ public class Application : IApplication {
         if (newWidth != _winWidth || newHeight != _winHeight) {
             _winWidth = newWidth;
             _winHeight = newHeight;
-            _dispatcher.Dispatch(_root, new ResizeEvent(_winWidth, _winHeight));
+
+            ResizeEvent resizeEvent = new ResizeEvent(_winWidth, _winHeight);
+            _dispatcher.Dispatch(_root, resizeEvent);
+
+            // TODO: make event dispatching more general
+            _cursorManager.HandleResize(resizeEvent);
         }
     }
 
@@ -145,6 +155,9 @@ public class Application : IApplication {
         List<Action<UiEvent>> keyHandlers = [];
         keyHandlers.Add(e => HandleKeyEvent((KeyEvent)e));
         _handlers.Add(typeof(KeyEvent), keyHandlers);
+
+        // TODO: this can probably be simplified with generalized event management.
+        _focusManager.RegisterListener(_cursorManager.HandleFocusChanged);
     }
 
     private void HandleApplicationEvent(UiEvent uiEvent) {

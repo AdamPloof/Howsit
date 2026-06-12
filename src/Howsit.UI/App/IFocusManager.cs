@@ -1,4 +1,6 @@
+using System;
 using Howsit.UI.Widgets;
+using Howsit.UI.Events;
 
 namespace Howsit.UI.App;
 
@@ -37,4 +39,10 @@ public interface IFocusManager {
     /// Focus on the previous widget in the tree.
     /// </summary>
     public void FocusPrevious();
+
+    /// <summary>
+    /// Register a callback to be called when focus changes. Callbacks take in
+    /// the previously focused widget and the newly focused widget.
+    /// </summary>
+    public void RegisterListener(Action<FocusChangedEvent> action);
 }

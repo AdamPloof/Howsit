@@ -59,6 +59,11 @@ public abstract class Widget : IWidget {
     protected List<IWidget> _children;
 
     /// <summary>
+    /// The widget's internal cursor.
+    /// </summary>
+    protected Cursor _cursor { get; init; } = new Cursor();
+
+    /// <summary>
     /// Registered event handlers.
     /// </summary>
     protected readonly Dictionary<Type, List<Action<UiEvent>>> _handlers = [];
@@ -191,6 +196,11 @@ public abstract class Widget : IWidget {
 
     /// <inheritdoc />
     public abstract bool CaptureTabKey();
+
+    /// <inheritdoc />
+    public Cursor GetCursor() {
+        return _cursor;
+    }
 
     /// <inheritdoc />
     public void AddHandler<TEvent>(Action<TEvent> handler) where TEvent : UiEvent {
