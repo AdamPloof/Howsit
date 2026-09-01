@@ -3,15 +3,15 @@
 ## Project structure & module organization
 This project is starting as hand-made terminal user interface library. Eventually we will build a terminal based email client on top of it.
 
-The solution file is `Howsit.sln`. Production code lives under `src/` with two projects: `src/Howsit.UI` for the terminal UI framework and `src/Howsit.App` for the executable host and demo runner. Tests live in `tests/Howsit.UI.Tests` and currently target the UI library. Treat `bin/` and `obj/` as generated output. Demo assets used by the app live in `src/Howsit.App/var/`.
+The solution file is `QuickTui.sln`. Production code lives under `src/` with two projects: `src/QuickTui.UI` for the terminal UI framework and `src/QuickTui.Demo` for the executable host and demo runner. Tests live in `tests/QuickTui.UI.Tests` and currently target the UI library. Treat `bin/` and `obj/` as generated output. Demo assets used by the app live in `src/QuickTui.Demo/var/`.
 
 ## Build, test, and development commands
 Use the .NET CLI from the repository root:
 
-- `dotnet restore Howsit.sln` restores NuGet packages.
-- `dotnet build Howsit.sln -nodeReuse:false -maxcpucount:1` builds all projects.
-- `dotnet run --project src/Howsit.App/HowsIt.App.csproj` starts the terminal app.
-- `dotnet test Howsit.sln -nodeReuse:false -maxcpucount:1` runs the xUnit suite.
+- `dotnet restore QuickTui.sln` restores NuGet packages.
+- `dotnet build QuickTui.sln -nodeReuse:false -maxcpucount:1` builds all projects.
+- `dotnet run --project src/QuickTui.Demo/QuickTui.Demo.csproj` starts the terminal app.
+- `dotnet test QuickTui.sln -nodeReuse:false -maxcpucount:1` runs the xUnit suite.
 
 The single-process flags are useful in constrained environments and still work fine locally.
 
@@ -22,7 +22,7 @@ The role of agents working on this project is to provide architectural advice an
 This project aims to use a minimum of external dependencies. There may be exceptions to this rule, but in general you should not install external pacakges.
 
 ## Coding style & naming conventions
-This repository is C# on `net10.0` with nullable reference types enabled and implicit usings disabled. Follow the existing style in `.editorconfig`: opening braces stay on the same line, and `else`, `catch`, and `finally` do not start on a new line. Use 4-space indentation, `PascalCase` for types and public members, `_camelCase` for private fields, and keep namespaces aligned to folder structure such as `Howsit.UI.Style`.
+This repository is C# on `net10.0` with nullable reference types enabled and implicit usings disabled. Follow the existing style in `.editorconfig`: opening braces stay on the same line, and `else`, `catch`, and `finally` do not start on a new line. Use 4-space indentation, `PascalCase` for types and public members, `_camelCase` for private fields, and keep namespaces aligned to folder structure such as `QuickTui.UI.Style`.
 
 ## Testing guidelines
 Tests use xUnit with files named after the subject under test, for example `RendererTests.cs` and `CellTests.cs`. Prefer focused `[Fact]` tests with descriptive method names such as `IdenticalBuffersDiffIsEmpty`. Add tests for renderer diffs, buffer sizing, and edge cases whenever behavior changes. Coverage is not currently enforced, but new logic should ship with matching tests.

@@ -2,22 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Howsit Demo",
+            "name": "Debug QuickTui Demo",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-howsit",
-            "program": "${workspaceFolder}/src/Howsit.Demo/bin/Debug/net10.0/HowsIt.Demo.dll",
-            "cwd": "${workspaceFolder}/src/Howsit.Demo",
+            "preLaunchTask": "build-quicktui",
+            "program": "${workspaceFolder}/src/QuickTui.Demo/bin/Debug/net10.0/QuickTui.Demo.dll",
+            "cwd": "${workspaceFolder}/src/QuickTui.Demo",
             "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
-            "name": "Debug Howsit Demo (External Terminal)",
+            "name": "Debug QuickTui Demo (External Terminal)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-howsit",
-            "program": "${workspaceFolder}/src/Howsit.Demo/bin/Debug/net10.0/HowsIt.Demo.dll",
-            "cwd": "${workspaceFolder}/src/Howsit.Demo",
+            "preLaunchTask": "build-quicktui",
+            "program": "${workspaceFolder}/src/QuickTui.Demo/bin/Debug/net10.0/QuickTui.Demo.dll",
+            "cwd": "${workspaceFolder}/src/QuickTui.Demo",
             "console": "externalTerminal",
             "stopAtEntry": false
         }
