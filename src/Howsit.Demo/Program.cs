@@ -41,7 +41,7 @@ public class UI {
             StretchHorizontal = 1,
             Padding = new Padding(1)
         };
-        Label label = new Label(
+        TextBox label = new TextBox(
             root,
             "Howsitgoinnotsobadgoodnyou?",
             new CellStyle(TextFormat.Normal, new Color(255, 0, 0))
