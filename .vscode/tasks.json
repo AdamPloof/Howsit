@@ -2,12 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build-howsit",
+            "label": "build-quicktui",
             "type": "process",
             "command": "dotnet",
             "args": [
                 "build",
-                "${workspaceFolder}/Howsit.sln",
+                "${workspaceFolder}/QuickTui.sln",
                 "-nodeReuse:false",
                 "-maxcpucount:1"
             ],

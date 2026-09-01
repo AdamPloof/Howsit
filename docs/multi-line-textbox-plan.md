@@ -72,7 +72,7 @@ can incorrectly send input into descendants.
 - Add dispatcher tests proving targeted input does not descend into children while resize broadcasts do.
 - Add parser classification tests for printable characters, control characters, and special keys.
 - Add an interactive textbox to the demo for manual verification of typing, multiline editing, scrolling, Escape, focus traversal, resizing, and terminal cursor restoration.
-- Run dotnet test Howsit.sln -nodeReuse:false -maxcpucount:1 after each subsystem and at completion.
+- Run dotnet test QuickTui.sln -nodeReuse:false -maxcpucount:1 after each subsystem and at completion.
 
 ## Assumptions
 
