@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Howsit.UI.Drawing;
 using Howsit.UI.Layout;
+using Howsit.UI.Events;
 
 namespace Howsit.UI.Widgets;
 
@@ -10,7 +11,8 @@ namespace Howsit.UI.Widgets;
 /// AbstractWidget provides a base implementation for the most common parts of a widget.
 /// Most widgets will inherity from this rather than fully implementing IWidget from scratch.
 /// </summary>
-public abstract class AbstractWidget : IWidget {
+public abstract class Widget : IWidget {
+    /// <inheritdoc />
     public IWidget? Parent { get; set; }
 
     /// <inheritdoc />
@@ -37,17 +39,44 @@ public abstract class AbstractWidget : IWidget {
     /// <inheritdoc />
     public Rect BoundingBox { get; set; }
 
+    /// <inheritdoc />
+    public bool IsDirty { get; set; }
+
+    /// <inheritdoc />
+    public bool HasFocus { get; protected set; }
+
+    /// <inheritdoc />
+    public abstract bool AcceptsFocus { get; protected set; }
+
+    /// <summary>
+    /// Unique identifier for this Widget
+    /// </summary>
     protected Guid _id;
 
+    /// <summary>
+    /// Collection of child widgets.
+    /// </summary>
     protected List<IWidget> _children;
+
+    /// <summary>
+    /// The widget's internal cursor.
+    /// </summary>
+    protected Cursor _cursor { get; init; } = new Cursor();
+
+    /// <summary>
+    /// Registered event handlers.
+    /// </summary>
+    protected readonly Dictionary<Type, List<Action<UiEvent>>> _handlers = [];
 
     /// <summary>
     /// All Widgets that inherit from AbstractWidget should call the base constructor
     /// to ensure that its Id is set.
     /// </summary>
-    public AbstractWidget(IWidget? parent) {
-        BoundingBox = new Rect();
+    public Widget(IWidget? parent) {
         SizeHint = Size.Empty();
+        BoundingBox = new Rect();
+        IsDirty = true;
+
         _id = Guid.NewGuid();
         _children = new List<IWidget>();
 
@@ -63,6 +92,12 @@ public abstract class AbstractWidget : IWidget {
         return _id;
     }
 
+    /// <inheritdoc />
+    public IEnumerable<IWidget> GetChildren() {
+        return _children;
+    }
+
+    /// <inheritdoc />
     public void AddChild(IWidget child) {
         if (child.Parent != this) {
             child.Parent = this;
@@ -77,7 +112,12 @@ public abstract class AbstractWidget : IWidget {
 
     /// <inheritdoc />
     public void SetBounds(Rect rect) {
+        if (rect == BoundingBox) {
+            return;
+        }
+
         BoundingBox = rect;
+        IsDirty = true;
     }
 
     /// <inheritdoc />
@@ -147,4 +187,42 @@ public abstract class AbstractWidget : IWidget {
 
     /// <inheritdoc />
     public abstract Cell[] Paint();
+
+    /// <inheritdoc />
+    public abstract bool SetFocus();
+
+    /// <inheritdoc />
+    public abstract bool ClearFocus();
+
+    /// <inheritdoc />
+    public abstract bool CaptureTabKey();
+
+    /// <inheritdoc />
+    public Cursor GetCursor() {
+        return _cursor;
+    }
+
+    /// <inheritdoc />
+    public void AddHandler<TEvent>(Action<TEvent> handler) where TEvent : UiEvent {
+        Type eventType = typeof(TEvent);
+        if (!_handlers.TryGetValue(eventType, out List<Action<UiEvent>>? handlers)) {
+            handlers = [];
+            _handlers[eventType] = handlers;
+        }
+
+        handlers.Add((e) => handler((TEvent)e));
+    }
+
+    public void HandleEvent(UiEvent uiEvent) {
+        Type eventType = uiEvent.GetType();
+        if (_handlers.TryGetValue(eventType, out List<Action<UiEvent>>? handlers)) {
+            foreach (Action<UiEvent> handler in handlers) {
+                handler(uiEvent);
+                if (uiEvent.Handled) {
+                    // Propagation stopped.
+                    return;
+                }
+            }
+        }
+    }
 }

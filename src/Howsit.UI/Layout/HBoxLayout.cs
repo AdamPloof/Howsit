@@ -85,7 +85,7 @@ public class HBoxLayout : ILayout {
             Rect r = new Rect(currentX, bounds.Y, width, height);
             w.SetBounds(r);
             remainingWidth -= w.GetWidth();
-            currentX = w.GetWidth();
+            currentX += w.GetWidth();
         }
 
         if (totalStretchFactors > 0) {

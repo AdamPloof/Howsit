@@ -305,6 +305,47 @@ public class VBoxLayoutTests {
     }
 
     [Fact]
+    public void ManyWidgetsStackedCorrectly() {
+        Label labelA = new Label(null, "") { SizeHint = new Size(20, 20) };
+        Label labelB = new Label(null, "") { SizeHint = new Size(15, 15) };
+        Label labelC = new Label(null, "") { SizeHint = new Size(10, 10) };
+        Label labelD = new Label(null, "") { SizeHint = new Size(5, 5) };
+
+        List<IWidget> widgets = [];
+        widgets.Add(labelA);
+        widgets.Add(labelB);
+        widgets.Add(labelC);
+        widgets.Add(labelD);
+
+        VBoxLayout layout = new();
+        layout.Arrange(widgets, new Rect(0, 0, 100, 100));
+
+        Rect labelBoundsA = labelA.BoundingBox;
+        Assert.Equal(0, labelBoundsA.X);
+        Assert.Equal(0, labelBoundsA.Y);
+        Assert.Equal(20, labelBoundsA.Width);
+        Assert.Equal(20, labelBoundsA.Height);
+
+        Rect labelBoundsB = labelB.BoundingBox;
+        Assert.Equal(0, labelBoundsB.X);
+        Assert.Equal(20, labelBoundsB.Y);
+        Assert.Equal(15, labelBoundsB.Width);
+        Assert.Equal(15, labelBoundsB.Height);
+
+        Rect labelBoundsC = labelC.BoundingBox;
+        Assert.Equal(0, labelBoundsC.X);
+        Assert.Equal(35, labelBoundsC.Y);
+        Assert.Equal(10, labelBoundsC.Width);
+        Assert.Equal(10, labelBoundsC.Height);
+
+        Rect labelBoundsD = labelD.BoundingBox;
+        Assert.Equal(0, labelBoundsD.X);
+        Assert.Equal(45, labelBoundsD.Y);
+        Assert.Equal(5, labelBoundsD.Width);
+        Assert.Equal(5, labelBoundsD.Height);
+    }
+
+    [Fact]
     public void EmptyBoundsThrows() {
         Label label = new Label(null, "Test") { SizeHint = new Size(10, 10) };
         List<IWidget> widgets = [];

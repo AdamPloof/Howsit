@@ -85,7 +85,7 @@ public class VBoxLayout : ILayout {
             Rect r = new Rect(bounds.X, currentY, width, height);
             w.SetBounds(r);
             remainingHeight -= w.GetHeight();
-            currentY = w.GetHeight();
+            currentY += w.GetHeight();
         }
 
         if (totalStretchFactors > 0) {

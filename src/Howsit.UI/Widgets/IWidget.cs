@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 
 using Howsit.UI;
 using Howsit.UI.Drawing;
 using Howsit.UI.Layout;
+using Howsit.UI.Events;
 
 namespace Howsit.UI.Widgets;
 
@@ -87,10 +89,34 @@ public interface IWidget {
     public Rect BoundingBox { get; set; }
 
     /// <summary>
+    /// Indicates whether the widget requires repainting.
+    /// </summary>
+    public bool IsDirty { get; set; }
+
+    /// <summary>
+    /// Returns true if the widget has the focus for input and other events.
+    /// </summary>
+    public bool HasFocus { get; }
+
+    /// <summary>
+    /// Indicates whether the widget accepts focus for input events.
+    /// </summary>
+    /// <remarks>
+    /// If this is true, the widget must abide by that when SetFocus() is called.
+    /// </remarks>
+    public bool AcceptsFocus { get; }
+
+    /// <summary>
     /// Get the widgets unique ID.
     /// </summary>
     /// <returns></returns>
     public Guid GetId();
+
+    /// <summary>
+    /// The child widgets.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerable<IWidget> GetChildren();
 
     /// <summary>
     /// Adds a child widget.
@@ -176,4 +202,48 @@ public interface IWidget {
     /// </summary>
     /// <returns></returns>
     public Cell[] Paint();
+
+    /// <summary>
+    /// Give the keyboard focus to this widget. Returns true if the widget accepts focus.
+    /// </summary>
+    public bool SetFocus();
+
+    /// <summary>
+    /// Removes the keyboard focus from this widget. Returns true if the widget allows focus
+    /// to be cleared.
+    /// </summary>
+    public bool ClearFocus();
+
+    /// <summary>
+    /// Indicates that the widget should capture tab key events and prevent tab from
+    /// changing the focused widget.
+    /// </summary>
+    /// <returns></returns>
+    public bool CaptureTabKey();
+
+    /// <summary>
+    /// Get the cursor within the widget. Every widget can maintain its own
+    /// cursor, but only one widget owns the screen's cursor at any given time.
+    /// </summary>
+    /// <returns></returns>
+    public Cursor GetCursor();
+
+    /// <summary>
+    /// Register an event handler for a specific event type. Multiple handlers can be registered
+    /// for the same event.
+    /// </summary>
+    /// <typeparam name="TEvent"></typeparam>
+    /// <param name="handler"></param>
+    public void AddHandler<TEvent>(Action<TEvent> handler) where TEvent : UiEvent;
+
+    /// <summary>
+    /// Forward an event along to a registered handler. If no handler is registered for
+    /// the event type, it is ignored.
+    /// </summary>
+    /// <remarks>
+    /// When multiple handlers are registered for the same event, they will be called in the order
+    /// that they were added.
+    /// </remarks>
+    /// <param name="uiEvent"></param>
+    public void HandleEvent(UiEvent uiEvent);
 }
